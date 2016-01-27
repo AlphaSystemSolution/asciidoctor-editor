@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.*?>
+<?import de.jensd.fx.glyphs.materialdesignicons.*?>
+<?import de.jensd.fx.glyphs.octicons.OctIconView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<fx:root type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/8.0.40"
+         xmlns:fx="http://javafx.com/fxml/1"
+         fx:controller="com.alphasystem.app.asciidoctoreditor.ui.controller.AsciiDoctorEditorController">
+    <top>
+        <VBox spacing="5">
+            <MenuBar fx:id="menuBar" useSystemMenuBar="true">
+                <Menu text="%file.menu.text">
+                    <MenuItem fx:id="newDocumentMenuItem" text="%newDocument.text" accelerator="SHORTCUT+N"
+                              onAction="#newDocumentAction">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="%newDocument.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="openDocumentMenuItem" text="%openDocument.text" accelerator="SHORTCUT+O"
+                              onAction="#openAction">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="%openDocument.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="saveDocumentMenuItem" text="%saveDocument.text" accelerator="SHORTCUT+S"
+                              onAction="#saveAction">
+                        <graphic>
+                            <MaterialDesignIconView glyphName="%saveDocument.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <SeparatorMenuItem/>
+                    <MenuItem fx:id="exitMenuItem" text="%exit.text" accelerator="ALT+F4" onAction="#exitAction"/>
+                </Menu>
+                <Menu text="%edit.menu.text">
+                    <MenuItem fx:id="undoMenuItem" text="%undo.text" accelerator="SHORTCUT+Z"
+                              onAction="#undoAction">
+                        <graphic>
+                            <MaterialDesignIconView glyphName="%undo.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="redoMenuItem" text="%redo.text" accelerator="SHORTCUT+Y"
+                              onAction="#redoAction">
+                        <graphic>
+                            <MaterialDesignIconView glyphName="%redo.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <SeparatorMenuItem/>
+                    <MenuItem fx:id="cutMenuItem" text="%cut.text" accelerator="SHORTCUT+X"
+                              onAction="#cutAction">
+                        <graphic>
+                            <MaterialDesignIconView glyphName="%cut.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="copyMenuItem" text="%copy.text" accelerator="SHORTCUT+C"
+                              onAction="#copyAction">
+                        <graphic>
+                            <MaterialDesignIconView glyphName="%copy.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="pasteMenuItem" text="%paste.text" accelerator="SHORTCUT+V"
+                              onAction="#pasteAction">
+                        <graphic>
+                            <MaterialDesignIconView glyphName="%paste.icon"/>
+                        </graphic>
+                    </MenuItem>
+                </Menu>
+                <Menu text="%format.menu.text">
+                    <MenuItem fx:id="boldMenuItem" text="%bold.text" accelerator="SHORTCUT+B"
+                              onAction="#boldAction">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="%bold.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="italicMenuItem" text="%italic.text" accelerator="SHORTCUT+I"
+                              onAction="#italicAction">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="%italic.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="underlineMenuItem" text="%underline.text" accelerator="SHORTCUT+U"
+                              onAction="#underlineAction">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="%underline.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="strikethroughMenuItem" text="%strikethrough.text" onAction="#strikethroughAction">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="%strikethrough.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="subscriptMenuItem" text="%subscript.text" onAction="#subscriptAction">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="%subscript.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="superscriptMenuItem" text="%superscript.text" onAction="#superscriptAction">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="%superscript.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="headerMenuItem" text="%header.text" onAction="#headerAction">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="%header.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="linkMenuItem" text="%link.text" onAction="#linkAction">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="%link.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem fx:id="codeMenuItem" text="%code.text" onAction="#codeAction">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="%code.icon"/>
+                        </graphic>
+                    </MenuItem>
+                    <Menu fx:id="admonitionMenu" text="%admonition.text">
+                        <MenuItem fx:id="noteMenuItem" text="%admonition.note.text" onAction="#admonitionAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%admonition.note.icon"/>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="tipMenuItem" text="%admonition.tip.text" onAction="#admonitionAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%admonition.tip.icon"/>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="importantMenuItem" text="%admonition.important.text"
+                                  onAction="#admonitionAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%admonition.important.icon"/>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="cautionMenuItem" text="%admonition.caution.text" onAction="#admonitionAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%admonition.caution.icon"/>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="warningMenuItem" text="%admonition.warning.text" onAction="#admonitionAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%admonition.warning.icon"/>
+                            </graphic>
+                        </MenuItem>
+                    </Menu>
+                    <Menu fx:id="blocksMenu" text="%blocks.text">
+                        <MenuItem fx:id="sideBarMenuItem" text="%blocks.sideBar.text" onAction="#blocksAction"/>
+                        <MenuItem fx:id="exampleMenuItem" text="%blocks.example.text" onAction="#blocksAction"/>
+                        <MenuItem fx:id="passThroughMenuItem" text="%blocks.passThrough.text" onAction="#blocksAction"/>
+                        <MenuItem fx:id="quoteMenuItem" text="%blocks.quote.text" onAction="#blocksAction"/>
+                    </Menu>
+                </Menu>
+            </MenuBar>
+            <ToolBar fx:id="toolBar">
+                <Button fx:id="newDocumentButton" onAction="#newDocumentAction">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="%newDocument.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%newDocument.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="openDocumentButton" onAction="#openAction">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="%openDocument.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%openDocument.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="saveDocumentButton" onAction="#saveAction">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="%saveDocument.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%saveDocument.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Separator/>
+                <Button fx:id="undoButton" onAction="#undoAction">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="%undo.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%undo.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="redoButton" onAction="#redoAction">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="%redo.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%redo.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Separator/>
+                <Button fx:id="cutButton" onAction="#cutAction">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="%cut.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%cut.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="copyButton" onAction="#copyAction">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="%copy.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%copy.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="pasteButton" onAction="#pasteAction">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="%paste.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%paste.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Separator/>
+                <Button fx:id="boldButton" onAction="#boldAction">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="%bold.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%bold.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="italicButton" onAction="#italicAction">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="%italic.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%italic.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="underlineButton" onAction="#underlineAction">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="%underline.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%underline.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="strikethroughButton" onAction="#strikethroughAction">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="%strikethrough.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%strikethrough.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="subscriptButton" onAction="#subscriptAction">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="%subscript.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%subscript.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="superscriptButton" onAction="#superscriptAction">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="%superscript.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%superscript.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="headerButton" onAction="#headerAction">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="%header.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%header.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="linkButton" onAction="#linkAction">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="%link.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%link.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="codeButton" onAction="#codeAction">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="%code.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%code.toolTip"/>
+                    </tooltip>
+                </Button>
+                <Separator/>
+                <MenuButton fx:id="admonitionButton" text="%admonition.text">
+                    <items>
+                        <MenuItem fx:id="noteButton" text="%admonition.note.text" onAction="#admonitionAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%admonition.note.icon" size="%toolbarButton.size"/>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="tipButton" text="%admonition.tip.text" onAction="#admonitionAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%admonition.tip.icon"/>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="importantButton" text="%admonition.important.text"
+                                  onAction="#admonitionAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%admonition.important.icon"/>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="cautionButton" text="%admonition.caution.text" onAction="#admonitionAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%admonition.caution.icon"/>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="warningButton" text="%admonition.warning.text" onAction="#admonitionAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%admonition.warning.icon"/>
+                            </graphic>
+                        </MenuItem>
+                    </items>
+                </MenuButton>
+                <MenuButton fx:id="blocksButton" text="%blocks.text">
+                    <items>
+                        <MenuItem fx:id="sideBarButton" text="%blocks.sideBar.text" onAction="#blocksAction"/>
+                        <MenuItem fx:id="exampleButton" text="%blocks.example.text" onAction="#blocksAction"/>
+                        <MenuItem fx:id="passThroughButton" text="%blocks.passThrough.text" onAction="#blocksAction"/>
+                        <MenuItem fx:id="quoteButton" text="%blocks.quote.text" onAction="#blocksAction"/>
+                    </items>
+                </MenuButton>
+                <MenuButton fx:id="htmlEntitiesButton" text="%addHTMLSymbol.text">
+                    <items>
+                        <MenuItem fx:id="spaceButton" text="%space.text" onAction="#htmlSymbolsAction"/>
+                        <MenuItem fx:id="dashButton" text="%dash.text" onAction="#htmlSymbolsAction"/>
+                        <MenuItem fx:id="copyrightButton" text="%copyright.text" onAction="#htmlSymbolsAction"/>
+                        <MenuItem fx:id="registeredButton" text="%registered.text" onAction="#htmlSymbolsAction"/>
+                    </items>
+                </MenuButton>
+                <Button fx:id="keyboardButton" onAction="#showKeyboard">
+                    <graphic>
+                        <OctIconView glyphName="%keyboard.icon" size="%toolbarButton.size"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%keyboard.toolTip"/>
+                    </tooltip>
+                </Button>
+            </ToolBar>
+        </VBox>
+    </top>
+    <center>
+        <TabPane fx:id="tabPane"/>
+    </center>
+</fx:root>
