@@ -7,8 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.io.File;
-
 /**
  * @author sali
  */
@@ -29,10 +27,7 @@ public class AsciiDoctorEditorApp extends Application {
         primaryStage.setWidth(bounds.getWidth());
         primaryStage.setHeight(bounds.getHeight());
 
-        final File file = new File("C:\\Users\\sali\\development\\asciidoc\\arabic2.adoc");
         AsciiDoctorEditor view = new AsciiDoctorEditor();
-        view.setInitialFile(file);
-//        view.setShowArabicKeyBoard(true);
         Scene scene = new Scene(view);
         scene.getStylesheets().addAll("/styles/glyphs_custom.css");
         primaryStage.setMaximized(true);

@@ -38,6 +38,7 @@ public final class AsciiDocPropertyInfo {
         setStylesDir(null);
         setIcons(null);
         setLinkCss(true);
+        setOmitLastUpdatedTimeStamp(true);
         optionsBuilder.compact(true).safe(SAFE);
     }
 
@@ -113,7 +114,9 @@ public final class AsciiDocPropertyInfo {
 
     public void setLinkCss(boolean linkCss) {
         this.linkCss = linkCss;
-        attributesBuilder.linkCss(this.linkCss);
+        if (this.linkCss) {
+            attributesBuilder.linkCss(this.linkCss);
+        }
     }
 
     public String getIcons() {
@@ -121,7 +124,7 @@ public final class AsciiDocPropertyInfo {
     }
 
     public void setIcons(String icons) {
-        this.icons = isBlank(icons) ? "font" : icons;
+        this.icons = icons;
         attributesBuilder.icons(this.icons);
     }
 

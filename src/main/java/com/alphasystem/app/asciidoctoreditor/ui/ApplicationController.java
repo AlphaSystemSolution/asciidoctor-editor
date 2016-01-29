@@ -271,7 +271,7 @@ public final class ApplicationController implements ApplicationConstants {
             lines.add(format(":stylesdir: %s", stylesDir));
         }
         final String icons = propertyInfo.getIcons();
-        if (icons != null) {
+        if (!isBlank(icons)) {
             lines.add(format(":icons: %s", icons));
         }
         final String iconFontName = propertyInfo.getIconFontName();
@@ -279,13 +279,17 @@ public final class ApplicationController implements ApplicationConstants {
             lines.add(format(":iconfont-name: %s", iconFontName));
             lines.add(":iconfont-remote!:");
         }
+        final boolean linkCss = propertyInfo.isLinkCss();
+        if (linkCss) {
+            lines.add(":linkcss:");
+        }
         final boolean omitLastUpdatedTimeStamp = propertyInfo.isOmitLastUpdatedTimeStamp();
         if (omitLastUpdatedTimeStamp) {
             lines.add(":last-update-label!:");
         }
         lines.add("");
         lines.add("");
-        write(propertyInfo.getSrcFile().toPath(), lines, CREATE_NEW, WRITE);
+        write(propertyInfo.getSrcFile().toPath(), lines, CREATE, WRITE);
     }
 
     private boolean isBoundaryWord(TextArea editor) {
