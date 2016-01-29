@@ -93,7 +93,9 @@ public final class AsciiDocPropertyInfo {
 
     public void setStylesDir(String stylesDir) {
         this.stylesDir = isBlank(stylesDir) ? "css" : stylesDir;
-        attributesBuilder.stylesDir(this.stylesDir);
+        if (linkCss) {
+            attributesBuilder.stylesDir(this.stylesDir);
+        }
     }
 
     public File getCustomStyleSheetFile() {
@@ -115,7 +117,7 @@ public final class AsciiDocPropertyInfo {
     public void setLinkCss(boolean linkCss) {
         this.linkCss = linkCss;
         if (this.linkCss) {
-            attributesBuilder.linkCss(this.linkCss);
+            attributesBuilder.linkCss(this.linkCss).stylesDir(stylesDir);
         }
     }
 

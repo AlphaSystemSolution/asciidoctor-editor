@@ -27,11 +27,6 @@
             <version>${arabic-ui-support.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.alphasystem.fluent.jfx</groupId>
-            <artifactId>jfx-control-builder</artifactId>
-            <version>${jfx-control-builder.version}</version>
-        </dependency>
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
