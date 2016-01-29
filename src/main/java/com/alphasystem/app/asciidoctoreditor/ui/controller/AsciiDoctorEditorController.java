@@ -7,7 +7,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentDialog;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode;
 import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
-import com.alphasystem.arabic.ui.keyboard.KeyboardView;
+import com.alphasystem.arabic.ui.keyboard.ArabicKeyboard;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -30,7 +30,6 @@ import java.util.Optional;
 
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.EMBEDDED;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.STANDALONE;
-import static com.alphasystem.arabic.ui.keyboard.KeyboardView.OutputType.HTML;
 import static com.alphasystem.fx.ui.util.UiUtilities.defaultCursor;
 import static com.alphasystem.fx.ui.util.UiUtilities.waitCursor;
 import static com.alphasystem.util.AppUtil.USER_HOME_DIR;
@@ -52,6 +51,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     private AsciiDoctorEditor view;
     private AsciiDoctorEditorView currentEditorView;
     private TextArea currentEditor;
+    private int startCaretPosition = -1;
 
     @FXML
     private TabPane tabPane;
@@ -257,14 +257,29 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         fileChooser.setInitialDirectory(USER_HOME_DIR);
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("ADOC File", "*.adoc"));
 
-        KeyboardView keyboardView = new KeyboardView();
-        keyboardView.setOutputType(HTML);
+        ArabicKeyboard keyboardView = new ArabicKeyboard();
         keyboardPopup.setAutoHide(true);
         keyboardPopup.setHideOnEscape(true);
         keyboardPopup.getContent().add(keyboardView);
 
         initialFile.addListener((o, ov, nv) -> updateFile(nv));
         applicationMode.addListener((o, ov, nv) -> updateApplicationMode(nv));
+        keyboardView.htmlCodeValueProperty().addListener((o, ov, nv) -> {
+            if (nv == null) {
+                return;
+            }
+            int oldTextLength = ov == null ? -1 : ov.length();
+            int end = startCaretPosition + oldTextLength;
+            if (oldTextLength > -1 && end < currentEditor.getText().length()) {
+                try {
+                    currentEditor.replaceText(startCaretPosition, end, nv);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                currentEditor.insertText(startCaretPosition, nv);
+            }
+        });
     }
 
     public final ObjectProperty<File> initialFileProperty() {
@@ -492,7 +507,9 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     public void showKeyboard(ActionEvent event) {
         if (keyboardPopup.isShowing()) {
             keyboardPopup.hide();
+            startCaretPosition = -1;
         } else {
+            startCaretPosition = currentEditor.getCaretPosition();
             Button button = (Button) event.getSource();
             final Bounds bounds = button.localToScreen(button.getBoundsInLocal());
             keyboardPopup.show(button, bounds.getMinX(), bounds.getMinY() + bounds.getHeight());
@@ -581,7 +598,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         if (validFile) {
             openAction(file);
         } else {
-            if (EMBEDDED.equals(applicationMode)) {
+            if (EMBEDDED.equals(applicationMode.get())) {
                 String path = (file == null) ? "Not provided" : file.getPath();
                 throw new RuntimeException(format("File {%s} has to be a valid file", path));
             }
