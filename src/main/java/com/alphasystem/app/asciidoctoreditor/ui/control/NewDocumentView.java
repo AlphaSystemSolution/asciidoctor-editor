@@ -1,6 +1,6 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
-import com.alphasystem.app.asciidoctoreditor.ui.control.skin.NewDocumentSkin;
+import com.alphasystem.app.asciidoctoreditor.ui.control.skin.NewDocumentSkin2;
 import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
 import com.alphasystem.app.asciidoctoreditor.ui.model.DocumentType;
 import com.alphasystem.app.asciidoctoreditor.ui.model.IconFontName;
@@ -10,6 +10,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 
 import java.io.File;
+import java.util.Objects;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -21,14 +22,14 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class NewDocumentView extends Control {
 
     public static final String DEFAULT_STYLES_DIR = "<document_base_dir>";
-    public static final int MAX_WIDTH = 700;
+    public static final int MAX_WIDTH = 800;
     private final ObjectProperty<AsciiDocPropertyInfo> propertyInfo = new SimpleObjectProperty<>(null, "propertyInfo");
     private final ObjectProperty<DocumentType> documentType = new SimpleObjectProperty<>(null, "documentType");
     private final StringProperty documentName = new SimpleStringProperty(null, "documentName");
     private final StringProperty documentTitle = new SimpleStringProperty(null, "documentTitle");
     private final StringProperty baseDir = new SimpleStringProperty(null, "baseDir");
     private final StringProperty stylesDir = new SimpleStringProperty(null, "stylesDir");
-    private final ObjectProperty<File> customStyleSheetFile = new SimpleObjectProperty<>(null, "customStyleSheetFile");
+    private final StringProperty customStyleSheetFile = new SimpleStringProperty(null, "customStyleSheetFile");
     private final BooleanProperty linkCss = new SimpleBooleanProperty(true, "linkCss");
     private final ObjectProperty<Icons> icons = new SimpleObjectProperty<>(null, "icons");
     private final ObjectProperty<IconFontName> iconFontName = new SimpleObjectProperty<>(null, "iconFontName");
@@ -50,7 +51,10 @@ public class NewDocumentView extends Control {
             }
             setBaseDir(baseDir);
             setStylesDir(nv.getStylesDir());
-            setCustomStyleSheetFile(nv.getCustomStyleSheetFile());
+            final File customStyleSheetFile = nv.getCustomStyleSheetFile();
+            if (Objects.nonNull(customStyleSheetFile) && customStyleSheetFile.exists()) {
+                setCustomStyleSheetFile(customStyleSheetFile.getPath());
+            }
             setLinkCss(nv.isLinkCss());
             setIcons(Icons.fromValue(nv.getIcons()));
             setIconFontName(IconFontName.fromDisplayName(nv.getIconFontName()));
@@ -78,7 +82,13 @@ public class NewDocumentView extends Control {
             String value = (nv != null && nv.equals(DEFAULT_STYLES_DIR)) ? "." : nv;
             getPropertyInfo().setStylesDir(value);
         });
-        customStyleSheetFileProperty().addListener((o, ov, nv) -> getPropertyInfo().setCustomStyleSheetFile(nv));
+        customStyleSheetFileProperty().addListener((o, ov, nv) -> {
+            File customStyleSheetFile = null;
+            if (isNotBlank(nv)) {
+                customStyleSheetFile = new File(nv);
+            }
+            getPropertyInfo().setCustomStyleSheetFile(customStyleSheetFile);
+        });
         linkCssProperty().addListener((o, ov, nv) -> getPropertyInfo().setLinkCss(nv));
         iconsProperty().addListener((o, ov, nv) -> {
             final boolean none = (nv == null) || Icons.DEFAULT.equals(nv);
@@ -98,7 +108,7 @@ public class NewDocumentView extends Control {
         setMinWidth(MAX_WIDTH);
         setMaxWidth(MAX_WIDTH);
         updateNeedRequired();
-        setSkin(new NewDocumentSkin(this));
+        setSkin(new NewDocumentSkin2(this));
     }
 
     public final AsciiDocPropertyInfo getPropertyInfo() {
@@ -110,60 +120,60 @@ public class NewDocumentView extends Control {
         return pi;
     }
 
-    public final ObjectProperty<AsciiDocPropertyInfo> propertyInfoProperty() {
-        return propertyInfo;
-    }
-
     public final void setPropertyInfo(AsciiDocPropertyInfo propertyInfo) {
         this.propertyInfo.set(propertyInfo == null ? new AsciiDocPropertyInfo() : propertyInfo);
+    }
+
+    public final ObjectProperty<AsciiDocPropertyInfo> propertyInfoProperty() {
+        return propertyInfo;
     }
 
     public final DocumentType getDocumentType() {
         return documentType.get();
     }
 
-    public final ObjectProperty<DocumentType> documentTypeProperty() {
-        return documentType;
-    }
-
     public final void setDocumentType(DocumentType documentType) {
         this.documentType.set(documentType);
+    }
+
+    public final ObjectProperty<DocumentType> documentTypeProperty() {
+        return documentType;
     }
 
     public final String getDocumentName() {
         return documentName.get();
     }
 
-    public final StringProperty documentNameProperty() {
-        return documentName;
-    }
-
     public final void setDocumentName(String documentName) {
         this.documentName.set(documentName);
+    }
+
+    public final StringProperty documentNameProperty() {
+        return documentName;
     }
 
     public final String getDocumentTitle() {
         return documentTitle.get();
     }
 
-    public final StringProperty documentTitleProperty() {
-        return documentTitle;
-    }
-
     public final void setDocumentTitle(String documentTitle) {
         this.documentTitle.set(documentTitle);
+    }
+
+    public final StringProperty documentTitleProperty() {
+        return documentTitle;
     }
 
     public final String getBaseDir() {
         return baseDir.get();
     }
 
-    public final StringProperty baseDirProperty() {
-        return baseDir;
-    }
-
     public final void setBaseDir(String baseDir) {
         this.baseDir.set(baseDir);
+    }
+
+    public final StringProperty baseDirProperty() {
+        return baseDir;
     }
 
     public final StringProperty stylesDirProperty() {
@@ -174,16 +184,16 @@ public class NewDocumentView extends Control {
         this.stylesDir.set(stylesDir);
     }
 
-    public final File getCustomStyleSheetFile() {
+    public final String getCustomStyleSheetFile() {
         return customStyleSheetFile.get();
     }
 
-    public final ObjectProperty<File> customStyleSheetFileProperty() {
-        return customStyleSheetFile;
+    public final void setCustomStyleSheetFile(String customStyleSheetFile) {
+        this.customStyleSheetFile.set(customStyleSheetFile);
     }
 
-    public final void setCustomStyleSheetFile(File customStyleSheetFile) {
-        this.customStyleSheetFile.set(customStyleSheetFile);
+    public final StringProperty customStyleSheetFileProperty() {
+        return customStyleSheetFile;
     }
 
     public final BooleanProperty linkCssProperty() {
@@ -214,24 +224,24 @@ public class NewDocumentView extends Control {
         return docInfo2.get();
     }
 
-    public final StringProperty docInfo2Property() {
-        return docInfo2;
-    }
-
     public final void setDocInfo2(String docInfo2) {
         this.docInfo2.set(docInfo2);
+    }
+
+    public final StringProperty docInfo2Property() {
+        return docInfo2;
     }
 
     public boolean getOmitLastUpdatedTimeStamp() {
         return omitLastUpdatedTimeStamp.get();
     }
 
-    public BooleanProperty omitLastUpdatedTimeStampProperty() {
-        return omitLastUpdatedTimeStamp;
-    }
-
     public void setOmitLastUpdatedTimeStamp(boolean omitLastUpdatedTimeStamp) {
         this.omitLastUpdatedTimeStamp.set(omitLastUpdatedTimeStamp);
+    }
+
+    public BooleanProperty omitLastUpdatedTimeStampProperty() {
+        return omitLastUpdatedTimeStamp;
     }
 
     public final ReadOnlyBooleanProperty needRequiredProperty() {
@@ -251,6 +261,6 @@ public class NewDocumentView extends Control {
 
     @Override
     protected Skin<?> createDefaultSkin() {
-        return new NewDocumentSkin(this);
+        return new NewDocumentSkin2(this);
     }
 }

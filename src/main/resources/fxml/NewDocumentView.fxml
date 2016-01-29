@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.alphasystem.app.asciidoctoreditor.ui.model.*?>
+<?import de.jensd.fx.glyphs.fontawesome.*?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<fx:root xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.layout.BorderPane"
+         xmlns="http://javafx.com/javafx/8.0.40">
+    <style>-fx-background-color: transparent;-fx-border-color: lightgray;-fx-border-width: 1px;-fx-padding:
+        5;-fx-spacing: 4;
+    </style>
+    <center>
+        <GridPane alignment="CENTER" vgap="10" hgap="10">
+            <padding>
+                <Insets top="10" bottom="10" left="10" right="10"/>
+            </padding>
+
+            <!-- row 0 labels -->
+            <Label fx:id="documentTypeLabel" text="%documentType.text" contentDisplay="RIGHT"
+                   style="-fx-font-weight: bold" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <tooltip>
+                    <Tooltip text="%documentType.toolTip"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
+                </graphic>
+            </Label>
+            <Label fx:id="documentNameLabel" text="%documentName.text" contentDisplay="RIGHT"
+                   style="-fx-font-weight: bold" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                <tooltip>
+                    <Tooltip text="%documentName.toolTip"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
+                </graphic>
+            </Label>
+
+            <!-- row 1 fields -->
+            <ComboBox fx:id="documentTypeComboBox" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <DocumentType fx:value="BOOK"/>
+                        <DocumentType fx:value="ARTICLE"/>
+                        <DocumentType fx:value="MAN_PAGE"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <TextField fx:id="documentNameField" prefColumnCount="25" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+
+            <!-- row 2 labels -->
+            <Label fx:id="documentDirectoryLabel" text="%documentDirectory.text" contentDisplay="RIGHT"
+                   style="-fx-font-weight: bold" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                <tooltip>
+                    <Tooltip text="%documentDirectory.toolTip"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
+                </graphic>
+            </Label>
+            <Label fx:id="documentTitleLabel" text="%documentTitle.text" contentDisplay="RIGHT"
+                   style="-fx-font-weight: bold" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                <tooltip>
+                    <Tooltip text="%documentTitle.toolTip"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
+                </graphic>
+            </Label>
+
+            <!-- row 3 fields -->
+            <TextField fx:id="baseDirectoryField" disable="true" prefColumnCount="25" GridPane.columnIndex="0"
+                       GridPane.rowIndex="3"/>
+            <Button text="    ...    " GridPane.columnIndex="1" GridPane.rowIndex="3" onAction="#selectBaseDirectory"/>
+            <TextField fx:id="documentTitleField" prefColumnCount="25" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+
+            <!-- row 4 labels -->
+            <Label fx:id="styleSheetDirectoryLabel" text="%styleSheetDirectory.text" contentDisplay="RIGHT"
+                   GridPane.columnIndex="0" GridPane.rowIndex="4">
+                <tooltip>
+                    <Tooltip text="%styleSheetDirectory.toolTip"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
+                </graphic>
+            </Label>
+            <Label fx:id="linkCSSLabel" text="%linkCSS.text" contentDisplay="RIGHT"
+                   GridPane.columnIndex="1" GridPane.rowIndex="4">
+                <tooltip>
+                    <Tooltip text="%linkCSS.toolTip"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
+                </graphic>
+            </Label>
+            <Label fx:id="customStyleSheetLabel" text="%customStyleSheet.text" contentDisplay="RIGHT"
+                   GridPane.columnIndex="2" GridPane.rowIndex="4">
+                <tooltip>
+                    <Tooltip text="%customStyleSheet.toolTip"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
+                </graphic>
+            </Label>
+
+            <!-- row 5 fields -->
+            <TextField fx:id="stylesDirField" prefColumnCount="25" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+            <CheckBox fx:id="linkCSSCheckBox" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+            <TextField fx:id="styleSheetField" disable="true" prefColumnCount="25" GridPane.columnIndex="2"
+                       GridPane.rowIndex="5"/>
+            <Button text="    ...    " GridPane.columnIndex="3" GridPane.rowIndex="5"
+                    onAction="#selectCustomStyleSheet"/>
+
+            <!-- row 6 labels -->
+            <Label fx:id="iconsLabel" text="%icons.text" contentDisplay="RIGHT"
+                   GridPane.columnIndex="0" GridPane.rowIndex="6">
+                <tooltip>
+                    <Tooltip text="%icons.toolTip"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
+                </graphic>
+            </Label>
+            <Label fx:id="iconsFontNameLabel" text="%iconsFontName.text" contentDisplay="RIGHT"
+                   GridPane.columnIndex="2" GridPane.rowIndex="6">
+                <tooltip>
+                    <Tooltip text="%iconsFontName.toolTip"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
+                </graphic>
+            </Label>
+
+            <!-- row 7 fields -->
+            <ComboBox fx:id="iconsComboBox" GridPane.columnIndex="0" GridPane.rowIndex="7">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <Icons fx:value="DEFAULT"/>
+                        <Icons fx:value="FONT"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <ComboBox fx:id="iconsFontNameComboBox" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <IconFontName fx:value="DEFAULT"/>
+                        <IconFontName fx:value="FONT_AWESOME"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- row 9 -->
+            <CheckBox fx:id="omitLastUpdatedTimeStampCheckBox" text="%omitLastUpdatedTimeStamp.text"
+                      contentDisplay="RIGHT"
+                      GridPane.columnIndex="0" GridPane.rowIndex="9">
+                <tooltip>
+                    <Tooltip text="%omitLastUpdatedTimeStamp.toolTip"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
+                </graphic>
+            </CheckBox>
+        </GridPane>
+    </center>
+</fx:root>

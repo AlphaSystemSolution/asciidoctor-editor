@@ -12,7 +12,7 @@ public final class UIHelper {
     }
 
     public static String getLabel(String key) {
-        return getValue(format("%s.label", key));
+        return getValue(format("%s.text", key));
     }
 
     public static String getToolTipText(String key) {

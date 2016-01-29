@@ -25,6 +25,7 @@ import static de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.INFO_CIRCLE;
 import static javafx.geometry.Pos.CENTER;
 import static javafx.scene.control.ContentDisplay.RIGHT;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author sali
@@ -66,7 +67,7 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
     private static FontAwesomeIconView createInfoIcon() {
         FontAwesomeIconView icon = new FontAwesomeIconView();
         icon.setGlyphName(INFO_CIRCLE.name());
-        icon.setGlyphStyle("-fx-fill: rgb(0, 0, 255)");
+        icon.setGlyphStyle("-fx-fill: blue;");
         icon.setSize("1.0em");
         return icon;
     }
@@ -145,10 +146,7 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
         gridPane.add(new Label(gap), column, row + 1);
         Button button = new Button("    ...    ");
         button.setOnAction(event -> {
-            final File directory = directoryChooser.showDialog(view.getScene().getWindow());
-            if (directory != null) {
-                baseDirectoryField.setText(directory.getPath());
-            }
+            selectBaseDirectory(baseDirectoryField);
         });
         gridPane.add(button, column, row + 2);
 
@@ -194,11 +192,7 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
         label = createLabel(getLabel("customStyleSheet"), getToolTipText("customStyleSheet"));
         gridPane.add(label, column, row + 1);
         final TextField styleSheetField = createTextField(false, label);
-        view.customStyleSheetFileProperty().addListener((o, ov, nv) -> {
-            if (nv != null) {
-                styleSheetField.setText(nv.getName());
-            }
-        });
+        styleSheetField.textProperty().bindBidirectional(view.customStyleSheetFileProperty());
         gridPane.add(styleSheetField, column, row + 2);
 
         // 3rd set 4th column
@@ -207,16 +201,7 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
         button = new Button("    ...    ");
         button.disableProperty().bind(baseDirectoryField.textProperty().isNull());
         button.setOnAction(event -> {
-            final File customStyleSheetFile = view.getCustomStyleSheetFile();
-            if (customStyleSheetFile != null) {
-                fileChooser.setInitialDirectory(customStyleSheetFile.getParentFile());
-                fileChooser.setInitialFileName(customStyleSheetFile.getName());
-            }
-            final File file = fileChooser.showOpenDialog(view.getScene().getWindow());
-            if (file != null) {
-                view.setCustomStyleSheetFile(file);
-                styleSheetField.setText(file.getName());
-            }
+            selectCustomStyleSheet(styleSheetField);
         });
         gridPane.add(button, column, row + 2);
 
@@ -250,6 +235,7 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
             }
             iconsFontNameComboBox.setDisable(disable);
         });
+        iconsFontNameComboBox.setDisable(true);
 
         column = 0;
         row += 2;
@@ -260,6 +246,27 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
 
         pane.setCenter(gridPane);
         getChildren().addAll(pane);
+    }
+
+    private void selectCustomStyleSheet(TextField styleSheetField) {
+        final NewDocumentView view = getSkinnable();
+        final String customStyleSheetFileName = view.getCustomStyleSheetFile();
+        if (isNotBlank(customStyleSheetFileName)) {
+            File customStyleSheetFile = new File(customStyleSheetFileName);
+            fileChooser.setInitialDirectory(customStyleSheetFile.getParentFile());
+            fileChooser.setInitialFileName(customStyleSheetFile.getName());
+        }
+        final File file = fileChooser.showOpenDialog(view.getScene().getWindow());
+        if (file != null) {
+            styleSheetField.setText(file.getPath());
+        }
+    }
+
+    private void selectBaseDirectory(TextField baseDirectoryField) {
+        final File directory = directoryChooser.showDialog(getSkinnable().getScene().getWindow());
+        if (directory != null) {
+            baseDirectoryField.setText(directory.getPath());
+        }
     }
 
 }
