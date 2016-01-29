@@ -3,7 +3,6 @@ package com.alphasystem.app.asciidoctoreditor.ui.control.skin;
 import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
 import com.alphasystem.arabic.ui.Browser;
-import com.alphasystem.arabic.ui.keyboard.KeyboardView;
 import javafx.scene.control.SkinBase;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -11,7 +10,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
-import javafx.stage.Popup;
 import org.asciidoctor.OptionsBuilder;
 
 import static com.alphasystem.fx.ui.util.UiUtilities.wrapInScrollPane;
@@ -23,12 +21,10 @@ import static javafx.scene.control.TabPane.TabClosingPolicy.UNAVAILABLE;
  */
 public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
 
-    private ApplicationController applicationController = ApplicationController.getInstance();
-    private final Popup keyboardPopup = new Popup();
-    private final KeyboardView keyboardView = new KeyboardView();
     private final TextArea editor = new TextArea();
     private final Browser preview = new Browser();
     private final TabPane tabPane = new TabPane();
+    private ApplicationController applicationController = ApplicationController.getInstance();
 
     public AsciiDoctorEditorSkin(AsciiDoctorEditorView control) {
         super(control);
@@ -43,13 +39,6 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
     }
 
     private void initializeSkin() {
-        keyboardView.setTarget(editor);
-        keyboardView.setOnMouseClicked(event -> keyboardView.requestFocus());
-
-        keyboardPopup.setAutoHide(true);
-        keyboardPopup.setHideOnEscape(true);
-        keyboardPopup.getContent().add(keyboardView);
-
         BorderPane borderPane = new BorderPane();
 
         editor.setFont(Font.font("Courier New", 14.0));
