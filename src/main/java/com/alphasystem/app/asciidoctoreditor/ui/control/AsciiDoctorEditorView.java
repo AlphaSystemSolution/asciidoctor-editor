@@ -1,6 +1,6 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
-import com.alphasystem.app.asciidoctoreditor.ui.control.skin.AsciiDoctorEditorSkin2;
+import com.alphasystem.app.asciidoctoreditor.ui.control.skin.AsciiDoctorEditorSkin;
 import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
 import javafx.beans.property.*;
 import javafx.scene.control.Control;
@@ -34,7 +34,7 @@ public class AsciiDoctorEditorView extends Control {
         });
         setContent("");
         setDisable(true);
-        setSkin(new AsciiDoctorEditorSkin2(this));
+        setSkin(new AsciiDoctorEditorSkin(this));
     }
 
     public final AsciiDocPropertyInfo getPropertyInfo() {
@@ -78,11 +78,11 @@ public class AsciiDoctorEditorView extends Control {
     }
 
     public final TextArea getEditor() {
-        return ((AsciiDoctorEditorSkin2) getSkin()).getEditor();
+        return ((AsciiDoctorEditorSkin) getSkin()).getEditor();
     }
 
     @Override
     protected Skin<?> createDefaultSkin() {
-        return new AsciiDoctorEditorSkin2(this);
+        return new AsciiDoctorEditorSkin(this);
     }
 }
