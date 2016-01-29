@@ -1,9 +1,9 @@
 package com.alphasystem.app.asciidoctoreditor.ui;
 
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
-import com.alphasystem.app.asciidoctoreditor.ui.model.*;
-import com.alphasystem.arabic.ui.Browser;
-import javafx.collections.ObservableList;
+import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
+import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
+import com.alphasystem.fx.ui.Browser;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -34,7 +34,6 @@ import static java.nio.file.Files.*;
 import static java.nio.file.Files.createTempFile;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.*;
-import static javafx.collections.FXCollections.observableArrayList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -44,9 +43,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public final class ApplicationController implements ApplicationConstants {
 
     public static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("AsciiDoctorEditor");
-    public static final ObservableList<DocumentType> DOCUMENT_TYPES = observableArrayList(DocumentType.values());
-    public static final ObservableList<Icons> ICONS_TYPES = observableArrayList(Icons.values());
-    public static final ObservableList<IconFontName> ICON_FONT_NAME_TYPES = observableArrayList(IconFontName.values());
     private static final String DEFAULT_PREVIEW_FILE_NAME = "preview";
     private static final String PREVIEW_FILE_PREFIX = format("_____%s_____", DEFAULT_PREVIEW_FILE_NAME);
     private static final String PREVIEW_FILE_SUFFIX = "_____.html";

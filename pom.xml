@@ -22,9 +22,9 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>com.alphasystem.arabic</groupId>
-            <artifactId>arabic-ui-support</artifactId>
-            <version>${arabic-ui-support.version}</version>
+            <groupId>com.alphasystem.ui</groupId>
+            <artifactId>fx-support</artifactId>
+            <version>${fx-support.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -38,9 +38,9 @@
         </dependency>
     </dependencies>
     <properties>
-        <arabic-ui-support.version>${project.version}</arabic-ui-support.version>
-        <jfx-control-builder.version>${project.version}</jfx-control-builder.version>
         <maven.test.skip>true</maven.test.skip>
+        <arabic-ui-support.version>${project.version}</arabic-ui-support.version>
+        <fx-support.version>${project.version}</fx-support.version>
         <mainClass>com.alphasystem.app.asciidoctoreditor.ui.AsciiDoctorEditorApp</mainClass>
     </properties>
 </project>

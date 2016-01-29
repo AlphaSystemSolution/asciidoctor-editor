@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.alphasystem.arabic.ui.Browser?>
+<?import com.alphasystem.fx.ui.Browser?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>

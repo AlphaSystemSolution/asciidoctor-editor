@@ -2,7 +2,7 @@ package com.alphasystem.app.asciidoctoreditor.ui.control.skin;
 
 import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
-import com.alphasystem.arabic.ui.Browser;
+import com.alphasystem.fx.ui.Browser;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.SkinBase;
