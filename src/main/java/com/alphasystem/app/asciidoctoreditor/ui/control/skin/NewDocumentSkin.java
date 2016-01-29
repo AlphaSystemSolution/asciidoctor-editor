@@ -27,9 +27,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 /**
  * @author sali
  */
-public class NewDocumentSkin2 extends SkinBase<NewDocumentView> {
+public class NewDocumentSkin extends SkinBase<NewDocumentView> {
 
-    public NewDocumentSkin2(NewDocumentView control) {
+    public NewDocumentSkin(NewDocumentView control) {
         super(control);
         getChildren().setAll(new SkinView());
     }

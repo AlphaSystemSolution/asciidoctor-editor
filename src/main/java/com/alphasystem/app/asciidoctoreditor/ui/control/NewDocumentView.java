@@ -1,6 +1,6 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
-import com.alphasystem.app.asciidoctoreditor.ui.control.skin.NewDocumentSkin2;
+import com.alphasystem.app.asciidoctoreditor.ui.control.skin.NewDocumentSkin;
 import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
 import com.alphasystem.app.asciidoctoreditor.ui.model.DocumentType;
 import com.alphasystem.app.asciidoctoreditor.ui.model.IconFontName;
@@ -108,7 +108,7 @@ public class NewDocumentView extends Control {
         setMinWidth(MAX_WIDTH);
         setMaxWidth(MAX_WIDTH);
         updateNeedRequired();
-        setSkin(new NewDocumentSkin2(this));
+        setSkin(new NewDocumentSkin(this));
     }
 
     public final AsciiDocPropertyInfo getPropertyInfo() {
@@ -261,6 +261,6 @@ public class NewDocumentView extends Control {
 
     @Override
     protected Skin<?> createDefaultSkin() {
-        return new NewDocumentSkin2(this);
+        return new NewDocumentSkin(this);
     }
 }
