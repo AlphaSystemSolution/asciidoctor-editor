@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.alphasystem.arabic.ui.Browser?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+<fx:root xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.layout.BorderPane"
+         xmlns="http://javafx.com/javafx/8.0.40">
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE" side="BOTTOM">
+            <Tab fx:id="sourceTab" text="%sourceTab.text">
+                <BorderPane>
+                    <center>
+                        <ScrollPane vbarPolicy="AS_NEEDED" hbarPolicy="AS_NEEDED" fitToWidth="true" fitToHeight="true">
+                            <TextArea fx:id="editor">
+                                <font>
+                                    <Font name="Courier New" size="14.0"/>
+                                </font>
+                            </TextArea>
+                        </ScrollPane>
+                    </center>
+                </BorderPane>
+            </Tab>
+            <Tab fx:id="previewTab" text="%previewTab.text">
+                <Browser fx:id="preview"/>
+            </Tab>
+        </TabPane>
+    </center>
+</fx:root>

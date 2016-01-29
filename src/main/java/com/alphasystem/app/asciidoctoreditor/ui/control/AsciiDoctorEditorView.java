@@ -1,6 +1,6 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
-import com.alphasystem.app.asciidoctoreditor.ui.control.skin.AsciiDoctorEditorSkin;
+import com.alphasystem.app.asciidoctoreditor.ui.control.skin.AsciiDoctorEditorSkin2;
 import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
 import javafx.beans.property.*;
 import javafx.scene.control.Control;
@@ -34,31 +34,31 @@ public class AsciiDoctorEditorView extends Control {
         });
         setContent("");
         setDisable(true);
-        setSkin(new AsciiDoctorEditorSkin(this));
+        setSkin(new AsciiDoctorEditorSkin2(this));
     }
 
     public final AsciiDocPropertyInfo getPropertyInfo() {
         return propertyInfo.get();
     }
 
-    public final ObjectProperty<AsciiDocPropertyInfo> propertyInfoProperty() {
-        return propertyInfo;
-    }
-
     public final void setPropertyInfo(AsciiDocPropertyInfo propertyInfo) {
         this.propertyInfo.set(propertyInfo);
+    }
+
+    public final ObjectProperty<AsciiDocPropertyInfo> propertyInfoProperty() {
+        return propertyInfo;
     }
 
     public final String getContent() {
         return content.get();
     }
 
-    public final StringProperty contentProperty() {
-        return content;
-    }
-
     public final void setContent(String content) {
         this.content.set(content);
+    }
+
+    public final StringProperty contentProperty() {
+        return content;
     }
 
     public File getPreviewFile() {
@@ -78,11 +78,11 @@ public class AsciiDoctorEditorView extends Control {
     }
 
     public final TextArea getEditor() {
-        return ((AsciiDoctorEditorSkin) getSkin()).getEditor();
+        return ((AsciiDoctorEditorSkin2) getSkin()).getEditor();
     }
 
     @Override
     protected Skin<?> createDefaultSkin() {
-        return new AsciiDoctorEditorSkin(this);
+        return new AsciiDoctorEditorSkin2(this);
     }
 }

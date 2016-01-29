@@ -23,7 +23,6 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
 
     private final TextArea editor = new TextArea();
     private final Browser preview = new Browser();
-    private final TabPane tabPane = new TabPane();
     private ApplicationController applicationController = ApplicationController.getInstance();
 
     public AsciiDoctorEditorSkin(AsciiDoctorEditorView control) {
@@ -43,6 +42,8 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
 
         editor.setFont(Font.font("Courier New", 14.0));
         borderPane.setCenter(new StackPane(wrapInScrollPane(editor)));
+
+        TabPane tabPane = new TabPane();
 
         tabPane.setTabClosingPolicy(UNAVAILABLE);
         tabPane.setSide(BOTTOM);
