@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Optional;
 
+import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.*;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.EMBEDDED;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.STANDALONE;
 import static com.alphasystem.fx.ui.util.UiUtilities.defaultCursor;
@@ -384,6 +385,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
             };
             EventHandler<WorkerStateEvent> onSucceeded = event -> openAction((File) event.getSource().getValue());
             applicationController.doNewDocAction(asciiDocPropertyInfo, onFailed, onSucceeded);
+            view.setAction(NEW);
         });
     }
 
@@ -400,11 +402,13 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         fileChooser.setInitialDirectory(file.getParentFile());
         waitCursor(view);
         openAction(file);
+        view.setAction(OPEN);
     }
 
     @FXML
     public void saveAction() {
         saveAction(false);
+        view.setAction(SAVE);
     }
 
     @FXML

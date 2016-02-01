@@ -1,6 +1,7 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
 import com.alphasystem.app.asciidoctoreditor.ui.controller.AsciiDoctorEditorController;
+import com.alphasystem.app.asciidoctoreditor.ui.model.Action;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -21,6 +22,8 @@ import static java.util.ResourceBundle.getBundle;
 public class AsciiDoctorEditor extends BorderPane {
 
     private final ObjectProperty<File> initialFile = new SimpleObjectProperty<>(null, "initialFile");
+
+    private final ObjectProperty<Action> action = new SimpleObjectProperty<>(null, "action");
 
     public AsciiDoctorEditor() {
         this(STANDALONE);
@@ -47,5 +50,17 @@ public class AsciiDoctorEditor extends BorderPane {
 
     public final void setInitialFile(File initialFile) {
         this.initialFile.set(initialFile);
+    }
+
+    public final Action getAction() {
+        return action.get();
+    }
+
+    public final void setAction(Action action) {
+        this.action.set(action);
+    }
+
+    public final ObjectProperty<Action> actionProperty() {
+        return action;
     }
 }
