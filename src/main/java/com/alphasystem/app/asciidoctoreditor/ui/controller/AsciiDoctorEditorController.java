@@ -408,6 +408,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     @FXML
     public void saveAction() {
         saveAction(false);
+        view.setAction(null);
         view.setAction(SAVE);
     }
 
