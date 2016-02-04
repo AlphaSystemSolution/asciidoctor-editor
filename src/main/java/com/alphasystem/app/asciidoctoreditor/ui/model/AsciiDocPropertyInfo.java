@@ -27,7 +27,7 @@ public final class AsciiDocPropertyInfo {
     private boolean linkCss;
     private String icons;
     private String iconFontName;
-    private String docInfo2;
+    private boolean docInfo2;
     private String sourceLanguage;
     private boolean omitLastUpdatedTimeStamp;
     private File srcFile;
@@ -140,11 +140,11 @@ public final class AsciiDocPropertyInfo {
         attributesBuilder.iconFontName(localFontName ? this.iconFontName : null).iconFontRemote(!localFontName);
     }
 
-    public final String getDocInfo2() {
+    public final boolean getDocInfo2() {
         return docInfo2;
     }
 
-    public final void setDocInfo2(String docInfo2) {
+    public final void setDocInfo2(boolean docInfo2) {
         this.docInfo2 = docInfo2;
     }
 
