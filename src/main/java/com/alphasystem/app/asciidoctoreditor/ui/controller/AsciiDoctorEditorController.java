@@ -26,6 +26,8 @@ import javafx.stage.Window;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Optional;
 
 import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.*;
@@ -536,8 +538,8 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         EventHandler<WorkerStateEvent> onSucceeded = event -> {
             try {
                 openDocument(file, (String) event.getSource().getValue());
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e.getMessage(), e);
             } finally {
                 defaultCursor(view);
             }
@@ -552,7 +554,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
      * @param content content of the document
      * @throws FileNotFoundException
      */
-    private void openDocument(File file, String content) throws FileNotFoundException {
+    private void openDocument(File file, String content) throws IOException {
         if (file == null || !file.exists()) {
             String path = file == null ? "Not provided" : file.getPath();
             throw new FileNotFoundException(format("File {%s} does not exists.", path));
@@ -574,7 +576,8 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
             } // end of if "showFileDialog"
             EventHandler<WorkerStateEvent> onFailed = event -> {
                 defaultCursor(view);
-                event.getSource().getException().printStackTrace();
+                final Throwable ex = event.getSource().getException();
+                throw new RuntimeException(ex.getMessage(), ex);
             };
             EventHandler<WorkerStateEvent> onSucceeded = event -> saveDocument();
             applicationController.doSaveAction(destFile, currentEditor.getText(), onFailed, onSucceeded);
