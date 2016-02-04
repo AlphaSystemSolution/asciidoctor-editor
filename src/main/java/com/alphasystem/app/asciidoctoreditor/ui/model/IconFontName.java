@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public enum IconFontName {
 
-    DEFAULT("Default", null), FONT_AWESOME("font-awesome", "font-awesome-min.css");
+    DEFAULT("Default"), FONT_AWESOME("font-awesome");
 
     private static final Map<String, IconFontName> VALUES_MAP = new HashMap<>();
 
@@ -19,11 +19,9 @@ public enum IconFontName {
     }
 
     private final String dispalyName;
-    private final String cssFileName;
 
-    IconFontName(String value, String cssFileName) {
+    IconFontName(String value) {
         this.dispalyName = value;
-        this.cssFileName = cssFileName;
     }
 
     public static IconFontName fromDisplayName(String value) {
@@ -32,10 +30,6 @@ public enum IconFontName {
 
     public String getDispalyName() {
         return dispalyName;
-    }
-
-    public String getCssFileName() {
-        return cssFileName;
     }
 
     @Override
