@@ -27,11 +27,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static com.alphasystem.util.AppUtil.*;
+import static com.alphasystem.util.AppUtil.NEW_LINE;
+import static com.alphasystem.util.AppUtil.getResourceAsStream;
+import static com.alphasystem.util.nio.NIOFileUtils.copyDir;
+import static com.alphasystem.util.nio.NIOFileUtils.fastCopy;
 import static java.lang.Character.isWhitespace;
 import static java.lang.String.format;
 import static java.nio.file.Files.*;
-import static java.nio.file.Files.createTempFile;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -178,7 +180,7 @@ public final class ApplicationController implements ApplicationConstants {
         applyMarkup(editor, getMarkupBegin(blockTypeKey), getMarkupEnd(blockTypeKey), 6);
     }
 
-    public AsciiDoctorEditorView openDocument(final File docFile, final String content) {
+    public AsciiDoctorEditorView openDocument(final File docFile, final String content) throws IOException {
         if (docFile == null) {
             return null;
         }
@@ -189,7 +191,7 @@ public final class ApplicationController implements ApplicationConstants {
         return editorView;
     }
 
-    public AsciiDocPropertyInfo readDocPropertyInfo(final File docFile) {
+    public AsciiDocPropertyInfo readDocPropertyInfo(final File docFile) throws IOException {
         AsciiDocPropertyInfo propertyInfo = new AsciiDocPropertyInfo();
         propertyInfo.setSrcFile(docFile);
         File baseDir = docFile.getParentFile();
@@ -209,16 +211,13 @@ public final class ApplicationController implements ApplicationConstants {
         browser.getWebEngine().reload();
     }
 
-    private void createPreviewFile(AsciiDocPropertyInfo propertyInfo, File baseDir) {
+    private void createPreviewFile(AsciiDocPropertyInfo propertyInfo, File baseDir) throws IOException {
         // now populate preview file name, if preview file does not exists copy it
-        try {
+        try (InputStream inputStream = getResourceAsStream(format("templates.%s.html", DEFAULT_PREVIEW_FILE_NAME))) {
             File previewFile = createTempFile(baseDir.toPath(), PREVIEW_FILE_PREFIX, PREVIEW_FILE_SUFFIX).toFile();
             previewFile.deleteOnExit();
-            InputStream inputStream = getResourceAsStream(format("templates.%s.html", DEFAULT_PREVIEW_FILE_NAME));
             copy(inputStream, previewFile.toPath(), REPLACE_EXISTING);
             propertyInfo.setPreviewFile(previewFile);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -232,16 +231,8 @@ public final class ApplicationController implements ApplicationConstants {
         final String iconFontName = propertyInfo.getIconFontName();
         if (isNotBlank(iconFontName)) {
             if ("font-awesome".equals(iconFontName)) {
-                final InputStream is = getResourceAsStream("templates.font-awesome.css.font-awesome-min.css");
-                File targetStyleSheet = new File(stylesDir, format("%s.css", iconFontName));
-                Files.copy(is, targetStyleSheet.toPath(), REPLACE_EXISTING);
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-                File fontDir = new File(stylesDir.getParent(), "fonts");
-                copyResourceDirectory(fontDir, "templates/font-awesome/fonts", getClass());
+                copyDir(stylesDir.toPath(), "templates/font-awesome/css", getClass());
+                copyDir(Paths.get(stylesDir.getParent(), "fonts"), "templates/font-awesome/fonts", getClass());
             }
         }
     }
@@ -250,9 +241,11 @@ public final class ApplicationController implements ApplicationConstants {
         final File srcStyleSheet = propertyInfo.getCustomStyleSheetFile();
         if (srcStyleSheet != null) {
             File targetStyleSheet = new File(stylesDir, srcStyleSheet.getName());
-            final InputStream inputStream = newInputStream(srcStyleSheet.toPath(), READ);
-            final OutputStream outputStream = newOutputStream(targetStyleSheet.toPath(), WRITE);
-            fastCopy(inputStream, outputStream);
+            try (InputStream inputStream = newInputStream(srcStyleSheet.toPath(), READ);
+                 OutputStream outputStream = newOutputStream(targetStyleSheet.toPath(), WRITE, CREATE)) {
+                fastCopy(inputStream, outputStream);
+            }
+
         }
     }
 
@@ -278,6 +271,10 @@ public final class ApplicationController implements ApplicationConstants {
         final boolean linkCss = propertyInfo.isLinkCss();
         if (linkCss) {
             lines.add(":linkcss:");
+        }
+        final boolean docInfo2 = propertyInfo.getDocInfo2();
+        if (docInfo2) {
+            lines.add(":docinfo2:");
         }
         final boolean omitLastUpdatedTimeStamp = propertyInfo.isOmitLastUpdatedTimeStamp();
         if (omitLastUpdatedTimeStamp) {
