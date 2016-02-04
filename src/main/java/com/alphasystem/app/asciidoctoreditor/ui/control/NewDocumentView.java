@@ -33,7 +33,7 @@ public class NewDocumentView extends Control {
     private final BooleanProperty linkCss = new SimpleBooleanProperty(true, "linkCss");
     private final ObjectProperty<Icons> icons = new SimpleObjectProperty<>(null, "icons");
     private final ObjectProperty<IconFontName> iconFontName = new SimpleObjectProperty<>(null, "iconFontName");
-    private final StringProperty docInfo2 = new SimpleStringProperty(null, "docInfo2");
+    private final BooleanProperty docInfo2 = new SimpleBooleanProperty(null, "docInfo2");
     private final BooleanProperty omitLastUpdatedTimeStamp = new SimpleBooleanProperty(null, "omitLastUpdatedTimeStamp");
     private final ReadOnlyBooleanWrapper needRequired = new ReadOnlyBooleanWrapper(null, "needRequired");
 
@@ -220,15 +220,15 @@ public class NewDocumentView extends Control {
         this.iconFontName.set(iconFontName);
     }
 
-    public final String getDocInfo2() {
+    public final boolean getDocInfo2() {
         return docInfo2.get();
     }
 
-    public final void setDocInfo2(String docInfo2) {
+    public final void setDocInfo2(boolean docInfo2) {
         this.docInfo2.set(docInfo2);
     }
 
-    public final StringProperty docInfo2Property() {
+    public final BooleanProperty docInfo2Property() {
         return docInfo2;
     }
 
