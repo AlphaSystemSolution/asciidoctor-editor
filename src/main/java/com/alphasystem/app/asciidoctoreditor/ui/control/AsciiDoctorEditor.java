@@ -52,10 +52,6 @@ public class AsciiDoctorEditor extends BorderPane {
         this.initialFile.set(initialFile);
     }
 
-    public final Action getAction() {
-        return action.get();
-    }
-
     public final void setAction(Action action) {
         this.action.set(action);
     }
