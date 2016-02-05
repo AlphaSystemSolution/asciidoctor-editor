@@ -86,12 +86,18 @@ public final class ApplicationController implements ApplicationConstants {
         return format("%s%s%s", markupBegin, source, markupEnd);
     }
 
-    public void doNewDocAction(final AsciiDocPropertyInfo propertyInfo, EventHandler<WorkerStateEvent> onFailed,
+    public void doNewDocAction(final AsciiDocPropertyInfo propertyInfo, boolean skipCopyResources,
+                               EventHandler<WorkerStateEvent> onFailed,
                                EventHandler<WorkerStateEvent> onSucceeded) {
-        CopyResourcesService service = new CopyResourcesService(propertyInfo);
+        CopyResourcesService service = new CopyResourcesService(skipCopyResources, propertyInfo);
         service.setOnFailed(onFailed);
         service.setOnSucceeded(onSucceeded);
         service.start();
+    }
+
+    public void doNewDocAction(final AsciiDocPropertyInfo propertyInfo, EventHandler<WorkerStateEvent> onFailed,
+                               EventHandler<WorkerStateEvent> onSucceeded) {
+        doNewDocAction(propertyInfo, false, onFailed, onSucceeded);
     }
 
     public void doOpenAction(final File docFile, EventHandler<WorkerStateEvent> onFailed,
@@ -361,9 +367,11 @@ public final class ApplicationController implements ApplicationConstants {
 
     private class CopyResourcesService extends Service<File> {
 
+        private final boolean skipCopyResources;
         private final AsciiDocPropertyInfo propertyInfo;
 
-        private CopyResourcesService(final AsciiDocPropertyInfo propertyInfo) {
+        private CopyResourcesService(boolean skipCopyResources, final AsciiDocPropertyInfo propertyInfo) {
+            this.skipCopyResources = skipCopyResources;
             this.propertyInfo = propertyInfo;
         }
 
@@ -372,7 +380,9 @@ public final class ApplicationController implements ApplicationConstants {
             return new Task<File>() {
                 @Override
                 protected File call() throws Exception {
-                    copyResources(propertyInfo);
+                    if (!skipCopyResources) {
+                        copyResources(propertyInfo);
+                    }
                     createNewDocument(propertyInfo);
                     return propertyInfo.getSrcFile();
                 }
