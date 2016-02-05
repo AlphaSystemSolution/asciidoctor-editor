@@ -4,6 +4,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditor;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
 import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentDialog;
+import com.alphasystem.app.asciidoctoreditor.ui.model.Action;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode;
 import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
@@ -383,11 +384,12 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
             waitCursor(view);
             EventHandler<WorkerStateEvent> onFailed = event -> {
                 defaultCursor(view);
-                event.getSource().getException().printStackTrace();
+                final Throwable ex = event.getSource().getException();
+                throw new RuntimeException(ex.getMessage(), ex);
             };
             EventHandler<WorkerStateEvent> onSucceeded = event -> openAction((File) event.getSource().getValue());
             applicationController.doNewDocAction(asciiDocPropertyInfo, onFailed, onSucceeded);
-            view.setAction(NEW);
+            fireUpdateAction(NEW);
         });
     }
 
@@ -404,14 +406,13 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         fileChooser.setInitialDirectory(file.getParentFile());
         waitCursor(view);
         openAction(file);
-        view.setAction(OPEN);
+        fireUpdateAction(OPEN);
     }
 
     @FXML
     public void saveAction() {
         saveAction(false);
-        view.setAction(null);
-        view.setAction(SAVE);
+        fireUpdateAction(SAVE);
     }
 
     @FXML
@@ -621,5 +622,10 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
             top.getChildren().clear();
             top.getChildren().add(toolBar);
         }
+    }
+
+    private void fireUpdateAction(Action action) {
+        view.setAction(null);
+        view.setAction(action);
     }
 }
