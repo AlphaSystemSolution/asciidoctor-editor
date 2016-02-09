@@ -58,7 +58,7 @@ public class NewDocumentView extends Control {
             setLinkCss(nv.isLinkCss());
             setIcons(Icons.fromValue(nv.getIcons()));
             setIconFontName(IconFontName.fromDisplayName(nv.getIconFontName()));
-            setDocInfo2(nv.getDocInfo2());
+            setDocInfo2(nv.isDocInfo2());
             setOmitLastUpdatedTimeStamp(nv.isOmitLastUpdatedTimeStamp());
         });
         documentTypeProperty().addListener((o, ov, nv) -> {
