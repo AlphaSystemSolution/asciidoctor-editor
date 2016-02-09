@@ -7,6 +7,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static com.alphasystem.app.asciidoctoreditor.ui.model.Backend.HTML;
 import static com.alphasystem.util.AppUtil.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -17,11 +18,12 @@ import static org.asciidoctor.SafeMode.SAFE;
  */
 public final class AsciiDocPropertyInfo {
 
-    private final AttributesBuilder attributesBuilder = AttributesBuilder.attributes();
-    private final OptionsBuilder optionsBuilder = OptionsBuilder.options().attributes(attributesBuilder);
+    private final AttributesBuilder attributesBuilder;
+    private final OptionsBuilder optionsBuilder;
     private String documentType;
     private String documentName;
     private String documentTitle;
+    private String backend;
     private String stylesDir;
     private File customStyleSheetFile;
     private boolean linkCss;
@@ -34,12 +36,41 @@ public final class AsciiDocPropertyInfo {
     private File previewFile;
 
     public AsciiDocPropertyInfo() {
+        attributesBuilder = AttributesBuilder.attributes();
+        optionsBuilder = OptionsBuilder.options().attributes(attributesBuilder);
         setDocumentType(null);
+        setBackend(null);
         setStylesDir(null);
         setIcons(null);
         setLinkCss(true);
         setOmitLastUpdatedTimeStamp(true);
         optionsBuilder.compact(true).safe(SAFE);
+    }
+
+    /**
+     * Copy Constructor
+     *
+     * @param src source object, cannot be null.
+     * @throws IllegalArgumentException
+     */
+    public AsciiDocPropertyInfo(AsciiDocPropertyInfo src) throws IllegalArgumentException {
+        this();
+        if (src == null) {
+            throw new IllegalArgumentException("source object cannot be null");
+        }
+        setDocumentType(src.getDocumentType());
+        setDocumentName(src.getDocumentName());
+        setDocumentTitle(src.getDocumentTitle());
+        setDocInfo2(src.isDocInfo2());
+        setIcons(src.getIcons());
+        setIconFontName(src.getIconFontName());
+        setLinkCss(src.isLinkCss());
+        setSrcFile(src.getSrcFile());
+        setPreviewFile(src.getPreviewFile());
+        setStylesDir(src.getStylesDir());
+        setCustomStyleSheetFile(src.getCustomStyleSheetFile());
+        setSourceLanguage(src.getSourceLanguage());
+        setOmitLastUpdatedTimeStamp(src.isOmitLastUpdatedTimeStamp());
     }
 
     private static String getFailSafeString(Map<String, Object> attributes, String key) {
@@ -85,6 +116,15 @@ public final class AsciiDocPropertyInfo {
 
     public void setDocumentTitle(String documentTitle) {
         this.documentTitle = documentTitle;
+    }
+
+    public String getBackend() {
+        return backend;
+    }
+
+    public void setBackend(String backend) {
+        this.backend = (backend == null) ? HTML.getValue() : backend;
+        optionsBuilder.backend(this.backend);
     }
 
     public String getStylesDir() {
@@ -140,15 +180,15 @@ public final class AsciiDocPropertyInfo {
         attributesBuilder.iconFontName(localFontName ? this.iconFontName : null).iconFontRemote(!localFontName);
     }
 
-    public final boolean getDocInfo2() {
+    public boolean isDocInfo2() {
         return docInfo2;
     }
 
-    public final void setDocInfo2(boolean docInfo2) {
+    public void setDocInfo2(boolean docInfo2) {
         this.docInfo2 = docInfo2;
     }
 
-    public final String getSourceLanguage() {
+    public String getSourceLanguage() {
         return sourceLanguage;
     }
 
