@@ -3,6 +3,7 @@ package com.alphasystem.app.asciidoctoreditor.ui;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
 import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
+import com.alphasystem.app.asciidoctoreditor.ui.model.Backend;
 import com.alphasystem.fx.ui.Browser;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -36,6 +37,7 @@ import static java.lang.String.format;
 import static java.nio.file.Files.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.*;
+import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -111,6 +113,14 @@ public final class ApplicationController implements ApplicationConstants {
     public void doSaveAction(final File docFile, final String content, EventHandler<WorkerStateEvent> onFailed,
                              EventHandler<WorkerStateEvent> onSucceeded) {
         SaveDocService service = new SaveDocService(docFile, content);
+        service.setOnFailed(onFailed);
+        service.setOnSucceeded(onSucceeded);
+        service.start();
+    }
+
+    public void doExport(final AsciiDocPropertyInfo propertyInfo, final String content, final Backend backend,
+                         EventHandler<WorkerStateEvent> onFailed, EventHandler<WorkerStateEvent> onSucceeded) {
+        ExportDocumentService service = new ExportDocumentService(propertyInfo, content, backend);
         service.setOnFailed(onFailed);
         service.setOnSucceeded(onSucceeded);
         service.start();
@@ -278,7 +288,7 @@ public final class ApplicationController implements ApplicationConstants {
         if (linkCss) {
             lines.add(":linkcss:");
         }
-        final boolean docInfo2 = propertyInfo.getDocInfo2();
+        final boolean docInfo2 = propertyInfo.isDocInfo2();
         if (docInfo2) {
             lines.add(":docinfo2:");
         }
@@ -332,7 +342,12 @@ public final class ApplicationController implements ApplicationConstants {
             return new Task<String>() {
                 @Override
                 protected String call() throws Exception {
-                    List<String> lines = Files.readAllLines(Paths.get(docFile.toURI()));
+                    List<String> lines = null;
+                    try {
+                        lines = Files.readAllLines(Paths.get(docFile.toURI()));
+                    } catch (IOException e) {
+                        throw e;
+                    }
                     StringBuilder builder = new StringBuilder();
                     builder.append(lines.get(0));
                     for (int i = 1; i < lines.size(); i++) {
@@ -385,6 +400,33 @@ public final class ApplicationController implements ApplicationConstants {
                     }
                     createNewDocument(propertyInfo);
                     return propertyInfo.getSrcFile();
+                }
+            };
+        }
+    }
+
+    private class ExportDocumentService extends Service<AsciiDocPropertyInfo> {
+
+        private final AsciiDocPropertyInfo propertyInfo;
+        private final String content;
+
+        private ExportDocumentService(AsciiDocPropertyInfo propertyInfo, String content, Backend backend) {
+            this.propertyInfo = propertyInfo;
+            final File srcFile = propertyInfo.getSrcFile();
+            final String baseName = getBaseName(srcFile.getName());
+            final String fileName = format("%s.%s", baseName, backend.getExtension());
+            propertyInfo.setPreviewFile(new File(srcFile.getParentFile(), fileName));
+            propertyInfo.setBackend(backend.getValue());
+            this.content = content;
+        }
+
+        @Override
+        protected Task<AsciiDocPropertyInfo> createTask() {
+            return new Task<AsciiDocPropertyInfo>() {
+                @Override
+                protected AsciiDocPropertyInfo call() throws Exception {
+                    asciidoctor.convert(content, propertyInfo.getOptionsBuilder());
+                    return propertyInfo;
                 }
             };
         }

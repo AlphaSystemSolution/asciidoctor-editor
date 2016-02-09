@@ -4,10 +4,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditor;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
 import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentDialog;
-import com.alphasystem.app.asciidoctoreditor.ui.model.Action;
-import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
-import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode;
-import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
+import com.alphasystem.app.asciidoctoreditor.ui.model.*;
 import com.alphasystem.arabic.ui.keyboard.ArabicKeyboard;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
@@ -34,6 +31,8 @@ import java.util.Optional;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.*;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.EMBEDDED;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.STANDALONE;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.Backend.DOC_BOOK;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.Backend.HTML;
 import static com.alphasystem.fx.ui.util.UiUtilities.defaultCursor;
 import static com.alphasystem.fx.ui.util.UiUtilities.waitCursor;
 import static com.alphasystem.util.AppUtil.USER_HOME_DIR;
@@ -49,6 +48,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     private final ApplicationController applicationController = ApplicationController.getInstance();
     private final NewDocumentDialog newDocumentDialog = new NewDocumentDialog();
     private final Popup keyboardPopup = new Popup();
+    private final ArabicKeyboard keyboardView;
     private final ObjectProperty<File> initialFile = new SimpleObjectProperty<>(null, "initialFile");
     private final ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false, "active");
     private ObjectProperty<ApplicationMode> applicationMode = new SimpleObjectProperty<>(null, "applicationMode");
@@ -83,6 +83,24 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
 
     @FXML
     private Button saveDocumentButton;
+
+    @FXML
+    private Menu exportMenu;
+
+    @FXML
+    private MenuButton exportButton;
+
+    @FXML
+    private MenuItem exportToHtmlMenuItem;
+
+    @FXML
+    private MenuItem exportToHtmlButton;
+
+    @FXML
+    private MenuItem exportToDocBookMenuItem;
+
+    @FXML
+    private MenuItem exportToDocBookButton;
 
     @FXML
     private MenuItem exitMenuItem;
@@ -261,7 +279,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         fileChooser.setInitialDirectory(USER_HOME_DIR);
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("ADOC File", "*.adoc"));
 
-        ArabicKeyboard keyboardView = new ArabicKeyboard();
+        keyboardView = new ArabicKeyboard();
         keyboardPopup.setAutoHide(true);
         keyboardPopup.setHideOnEscape(true);
         keyboardPopup.getContent().add(keyboardView);
@@ -311,6 +329,11 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
             }
         });
 
+        exportToHtmlMenuItem.setUserData(HTML);
+        exportToHtmlButton.setUserData(HTML);
+        exportToDocBookMenuItem.setUserData(DOC_BOOK);
+        exportToDocBookButton.setUserData(DOC_BOOK);
+
         noteMenuItem.setUserData(NOTE_KEY);
         noteButton.setUserData(NOTE_KEY);
         tipMenuItem.setUserData(TIP_KEY);
@@ -339,6 +362,8 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         final BooleanBinding notActive = active.not();
         saveDocumentMenuItem.disableProperty().bind(notActive);
         saveDocumentButton.disableProperty().bind(notActive);
+        exportMenu.disableProperty().bind(notActive);
+        exportButton.disableProperty().bind(notActive);
         undoMenuItem.disableProperty().bind(notActive);
         undoButton.disableProperty().bind(notActive);
         redoMenuItem.disableProperty().bind(notActive);
@@ -382,11 +407,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         final Optional<AsciiDocPropertyInfo> result = newDocumentDialog.showAndWait();
         result.ifPresent(asciiDocPropertyInfo -> {
             waitCursor(view);
-            EventHandler<WorkerStateEvent> onFailed = event -> {
-                defaultCursor(view);
-                final Throwable ex = event.getSource().getException();
-                throw new RuntimeException(ex.getMessage(), ex);
-            };
+            EventHandler<WorkerStateEvent> onFailed = event -> handleOnFailed(event);
             EventHandler<WorkerStateEvent> onSucceeded = event -> openAction((File) event.getSource().getValue());
             applicationController.doNewDocAction(asciiDocPropertyInfo, onFailed, onSucceeded);
             fireUpdateAction(NEW);
@@ -413,6 +434,25 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     public void saveAction() {
         saveAction(false);
         fireUpdateAction(SAVE);
+    }
+
+    @FXML
+    public void exportAction(ActionEvent actionEvent) {
+        final MenuItem source = (MenuItem) actionEvent.getSource();
+        final Backend backend = (Backend) source.getUserData();
+        waitCursor(view);
+        EventHandler<WorkerStateEvent> onFailed = event -> handleOnFailed(event);
+        EventHandler<WorkerStateEvent> onSucceeded = event -> {
+            defaultCursor(view);
+        };
+        applicationController.doExport(new AsciiDocPropertyInfo(currentEditorView.getPropertyInfo()),
+                currentEditor.getText(), backend, onFailed, onSucceeded);
+    }
+
+    private void handleOnFailed(WorkerStateEvent event) {
+        defaultCursor(view);
+        final Throwable ex = event.getSource().getException();
+        throw new RuntimeException(ex.getMessage(), ex);
     }
 
     @FXML
@@ -517,6 +557,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
             keyboardPopup.hide();
             startCaretPosition = -1;
         } else {
+            keyboardView.setClearText(true);
             startCaretPosition = currentEditor.getCaretPosition();
             Button button = (Button) event.getSource();
             final Bounds bounds = button.localToScreen(button.getBoundsInLocal());
@@ -575,11 +616,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
                     return;
                 }
             } // end of if "showFileDialog"
-            EventHandler<WorkerStateEvent> onFailed = event -> {
-                defaultCursor(view);
-                final Throwable ex = event.getSource().getException();
-                throw new RuntimeException(ex.getMessage(), ex);
-            };
+            EventHandler<WorkerStateEvent> onFailed = event -> handleOnFailed(event);
             EventHandler<WorkerStateEvent> onSucceeded = event -> saveDocument();
             applicationController.doSaveAction(destFile, currentEditor.getText(), onFailed, onSucceeded);
         }

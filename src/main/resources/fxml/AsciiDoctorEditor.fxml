@@ -6,8 +6,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<fx:root type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/8.0.40"
-         xmlns:fx="http://javafx.com/fxml/1"
+<fx:root xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.layout.BorderPane"
+         xmlns="http://javafx.com/javafx/8.0.40"
          fx:controller="com.alphasystem.app.asciidoctoreditor.ui.controller.AsciiDoctorEditorController">
     <top>
         <VBox spacing="5">
@@ -31,6 +31,17 @@
                             <MaterialDesignIconView glyphName="%saveDocument.icon"/>
                         </graphic>
                     </MenuItem>
+                    <Menu fx:id="exportMenu" text="%export.text">
+                        <graphic>
+                            <MaterialDesignIconView glyphName="%export.icon"/>
+                        </graphic>
+                        <MenuItem fx:id="exportToHtmlMenuItem" text="%export.html.text" onAction="#exportAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%export.html.icon"/>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="exportToDocBookMenuItem" text="%export.docbook.text" onAction="#exportAction"/>
+                    </Menu>
                     <SeparatorMenuItem/>
                     <MenuItem fx:id="exitMenuItem" text="%exit.text" accelerator="ALT+F4" onAction="#exitAction"/>
                 </Menu>
@@ -177,6 +188,22 @@
                         <Tooltip text="%saveDocument.toolTip"/>
                     </tooltip>
                 </Button>
+                <MenuButton fx:id="exportButton">
+                    <graphic>
+                        <MaterialDesignIconView glyphName="%export.icon"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%export.toolTip"/>
+                    </tooltip>
+                    <items>
+                        <MenuItem fx:id="exportToHtmlButton" text="%export.html.text" onAction="#exportAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%export.html.icon"/>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="exportToDocBookButton" text="%export.docbook.text" onAction="#exportAction"/>
+                    </items>
+                </MenuButton>
                 <Separator/>
                 <Button fx:id="undoButton" onAction="#undoAction">
                     <graphic>
