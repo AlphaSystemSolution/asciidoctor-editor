@@ -70,6 +70,7 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
             AsciiDoctorEditorView view = getSkinnable();
             view.previewFileProperty().addListener((o, ov, nv) -> preview.loadUrl(nv));
 
+            editor.setWrapText(true);
             editor.textProperty().bindBidirectional(view.contentProperty());
             preview.loadUrl(view.getPreviewFile());
 
