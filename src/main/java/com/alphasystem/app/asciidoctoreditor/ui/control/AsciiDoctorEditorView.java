@@ -1,7 +1,7 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
 import com.alphasystem.app.asciidoctoreditor.ui.control.skin.AsciiDoctorEditorSkin;
-import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
+import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import javafx.beans.property.*;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
@@ -16,7 +16,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class AsciiDoctorEditorView extends Control {
 
-    private final ObjectProperty<AsciiDocPropertyInfo> propertyInfo = new SimpleObjectProperty<>(null, "propertyInfo");
+    private final ObjectProperty<AsciiDocumentInfo> propertyInfo = new SimpleObjectProperty<>(null, "propertyInfo");
     private final StringProperty content = new SimpleStringProperty(null, "content");
     private final ReadOnlyObjectWrapper<File> previewFile = new ReadOnlyObjectWrapper<>(null, "previewFile");
     private final BooleanProperty previewSelected = new SimpleBooleanProperty(false, "previewSelected");
@@ -37,15 +37,15 @@ public class AsciiDoctorEditorView extends Control {
         setSkin(new AsciiDoctorEditorSkin(this));
     }
 
-    public final AsciiDocPropertyInfo getPropertyInfo() {
+    public final AsciiDocumentInfo getPropertyInfo() {
         return propertyInfo.get();
     }
 
-    public final void setPropertyInfo(AsciiDocPropertyInfo propertyInfo) {
+    public final void setPropertyInfo(AsciiDocumentInfo propertyInfo) {
         this.propertyInfo.set(propertyInfo);
     }
 
-    public final ObjectProperty<AsciiDocPropertyInfo> propertyInfoProperty() {
+    public final ObjectProperty<AsciiDocumentInfo> propertyInfoProperty() {
         return propertyInfo;
     }
 

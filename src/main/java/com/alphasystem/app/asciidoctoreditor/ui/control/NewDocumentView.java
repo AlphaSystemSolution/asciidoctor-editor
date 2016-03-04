@@ -1,10 +1,10 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
 import com.alphasystem.app.asciidoctoreditor.ui.control.skin.NewDocumentSkin;
-import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
 import com.alphasystem.app.asciidoctoreditor.ui.model.DocumentType;
 import com.alphasystem.app.asciidoctoreditor.ui.model.IconFontName;
 import com.alphasystem.app.asciidoctoreditor.ui.model.Icons;
+import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import javafx.beans.property.*;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
@@ -23,7 +23,7 @@ public class NewDocumentView extends Control {
 
     public static final String DEFAULT_STYLES_DIR = "<document_base_dir>";
     public static final int MAX_WIDTH = 800;
-    private final ObjectProperty<AsciiDocPropertyInfo> propertyInfo = new SimpleObjectProperty<>(null, "propertyInfo");
+    private final ObjectProperty<AsciiDocumentInfo> propertyInfo = new SimpleObjectProperty<>(null, "propertyInfo");
     private final ObjectProperty<DocumentType> documentType = new SimpleObjectProperty<>(null, "documentType");
     private final StringProperty documentName = new SimpleStringProperty(null, "documentName");
     private final StringProperty documentTitle = new SimpleStringProperty(null, "documentTitle");
@@ -111,20 +111,20 @@ public class NewDocumentView extends Control {
         setSkin(new NewDocumentSkin(this));
     }
 
-    public final AsciiDocPropertyInfo getPropertyInfo() {
-        AsciiDocPropertyInfo pi = this.propertyInfo.get();
+    public final AsciiDocumentInfo getPropertyInfo() {
+        AsciiDocumentInfo pi = this.propertyInfo.get();
         if (pi == null) {
-            setPropertyInfo(new AsciiDocPropertyInfo());
+            setPropertyInfo(new AsciiDocumentInfo());
             pi = this.propertyInfo.get();
         }
         return pi;
     }
 
-    public final void setPropertyInfo(AsciiDocPropertyInfo propertyInfo) {
-        this.propertyInfo.set(propertyInfo == null ? new AsciiDocPropertyInfo() : propertyInfo);
+    public final void setPropertyInfo(AsciiDocumentInfo propertyInfo) {
+        this.propertyInfo.set(propertyInfo == null ? new AsciiDocumentInfo() : propertyInfo);
     }
 
-    public final ObjectProperty<AsciiDocPropertyInfo> propertyInfoProperty() {
+    public final ObjectProperty<AsciiDocumentInfo> propertyInfoProperty() {
         return propertyInfo;
     }
 

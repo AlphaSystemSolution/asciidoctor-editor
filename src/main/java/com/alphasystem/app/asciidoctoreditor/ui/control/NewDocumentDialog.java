@@ -1,6 +1,6 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
-import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
+import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -18,7 +18,7 @@ import static javafx.scene.control.ButtonType.*;
 /**
  * @author sali
  */
-public class NewDocumentDialog extends Dialog<AsciiDocPropertyInfo> {
+public class NewDocumentDialog extends Dialog<AsciiDocumentInfo> {
 
     private final NewDocumentView view = new NewDocumentView();
 
@@ -31,9 +31,9 @@ public class NewDocumentDialog extends Dialog<AsciiDocPropertyInfo> {
         okButton.disableProperty().bind(view.needRequiredProperty());
         okButton.addEventFilter(ACTION, this::verfifySourceFile);
         setResultConverter(param -> {
-            AsciiDocPropertyInfo propertyInfo = param.getButtonData().isCancelButton() ? null : view.getPropertyInfo();
+            AsciiDocumentInfo propertyInfo = param.getButtonData().isCancelButton() ? null : view.getPropertyInfo();
             // reset dialog
-            view.setPropertyInfo(new AsciiDocPropertyInfo());
+            view.setPropertyInfo(new AsciiDocumentInfo());
             return propertyInfo;
         });
     }

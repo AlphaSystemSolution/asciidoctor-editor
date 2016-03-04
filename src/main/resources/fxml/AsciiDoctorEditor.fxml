@@ -41,6 +41,11 @@
                             </graphic>
                         </MenuItem>
                         <MenuItem fx:id="exportToDocBookMenuItem" text="%export.docbook.text" onAction="#exportAction"/>
+                        <MenuItem fx:id="exportToWordMenuItem" text="%export.word.text" onAction="#exportToWordAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%export.word.icon"/>
+                            </graphic>
+                        </MenuItem>
                     </Menu>
                     <SeparatorMenuItem/>
                     <MenuItem fx:id="exitMenuItem" text="%exit.text" accelerator="ALT+F4" onAction="#exitAction"/>
@@ -202,6 +207,11 @@
                             </graphic>
                         </MenuItem>
                         <MenuItem fx:id="exportToDocBookButton" text="%export.docbook.text" onAction="#exportAction"/>
+                        <MenuItem fx:id="exportToWordButton" text="%export.word.text" onAction="#exportToWordAction">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="%export.word.icon"/>
+                            </graphic>
+                        </MenuItem>
                     </items>
                 </MenuButton>
                 <Separator/>

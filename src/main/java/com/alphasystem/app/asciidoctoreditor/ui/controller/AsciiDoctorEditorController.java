@@ -4,8 +4,12 @@ import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditor;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
 import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentDialog;
-import com.alphasystem.app.asciidoctoreditor.ui.model.*;
+import com.alphasystem.app.asciidoctoreditor.ui.model.Action;
+import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
+import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode;
 import com.alphasystem.arabic.ui.keyboard.ArabicKeyboard;
+import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
+import com.alphasystem.asciidoc.model.Backend;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -15,24 +19,30 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.*;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.*;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.EMBEDDED;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.STANDALONE;
-import static com.alphasystem.app.asciidoctoreditor.ui.model.Backend.DOC_BOOK;
-import static com.alphasystem.app.asciidoctoreditor.ui.model.Backend.HTML;
+import static com.alphasystem.asciidoc.model.Backend.*;
 import static com.alphasystem.fx.ui.util.UiUtilities.defaultCursor;
 import static com.alphasystem.fx.ui.util.UiUtilities.waitCursor;
 import static com.alphasystem.util.AppUtil.USER_HOME_DIR;
@@ -101,6 +111,12 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
 
     @FXML
     private MenuItem exportToDocBookButton;
+
+    @FXML
+    private MenuItem exportToWordMenuItem;
+
+    @FXML
+    private MenuItem exportToWordButton;
 
     @FXML
     private MenuItem exitMenuItem;
@@ -333,6 +349,8 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         exportToHtmlButton.setUserData(HTML);
         exportToDocBookMenuItem.setUserData(DOC_BOOK);
         exportToDocBookButton.setUserData(DOC_BOOK);
+        exportToWordMenuItem.setUserData(WORD);
+        exportToWordButton.setUserData(WORD);
 
         noteMenuItem.setUserData(NOTE_KEY);
         noteButton.setUserData(NOTE_KEY);
@@ -404,10 +422,10 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
 
     @FXML
     public void newDocumentAction() {
-        final Optional<AsciiDocPropertyInfo> result = newDocumentDialog.showAndWait();
+        final Optional<AsciiDocumentInfo> result = newDocumentDialog.showAndWait();
         result.ifPresent(asciiDocPropertyInfo -> {
             waitCursor(view);
-            EventHandler<WorkerStateEvent> onFailed = event -> handleOnFailed(event);
+            EventHandler<WorkerStateEvent> onFailed = this::handleOnFailed;
             EventHandler<WorkerStateEvent> onSucceeded = event -> openAction((File) event.getSource().getValue());
             applicationController.doNewDocAction(asciiDocPropertyInfo, onFailed, onSucceeded);
             fireUpdateAction(NEW);
@@ -441,12 +459,27 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         final MenuItem source = (MenuItem) actionEvent.getSource();
         final Backend backend = (Backend) source.getUserData();
         waitCursor(view);
-        EventHandler<WorkerStateEvent> onFailed = event -> handleOnFailed(event);
+        EventHandler<WorkerStateEvent> onFailed = this::handleOnFailed;
+        EventHandler<WorkerStateEvent> onSucceeded = event -> defaultCursor(view);
+        applicationController.doExport(new AsciiDocumentInfo(currentEditorView.getPropertyInfo()),
+                currentEditor.getText(), backend, onFailed, onSucceeded);
+    }
+
+    @FXML
+    public void exportToWordAction() {
+        waitCursor(view);
+        EventHandler<WorkerStateEvent> onFailed = this::handleOnFailed;
         EventHandler<WorkerStateEvent> onSucceeded = event -> {
             defaultCursor(view);
+            final Path path = (Path) event.getSource().getValue();
+            try {
+                Desktop.getDesktop().open(path.toFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         };
-        applicationController.doExport(new AsciiDocPropertyInfo(currentEditorView.getPropertyInfo()),
-                currentEditor.getText(), backend, onFailed, onSucceeded);
+        applicationController.doExportToWord(new AsciiDocumentInfo(currentEditorView.getPropertyInfo()),
+                currentEditor.getText(), onFailed, onSucceeded);
     }
 
     private void handleOnFailed(WorkerStateEvent event) {
@@ -616,7 +649,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
                     return;
                 }
             } // end of if "showFileDialog"
-            EventHandler<WorkerStateEvent> onFailed = event -> handleOnFailed(event);
+            EventHandler<WorkerStateEvent> onFailed = this::handleOnFailed;
             EventHandler<WorkerStateEvent> onSucceeded = event -> saveDocument();
             applicationController.doSaveAction(destFile, currentEditor.getText(), onFailed, onSucceeded);
         }
@@ -624,6 +657,13 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
 
     private void saveDocument() {
         // do nothing file should have been saved already
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println(currentEditor.getText());
+        System.out.println();
+        System.out.println();
+        System.out.println();
     }
 
     private void addTab(AsciiDoctorEditorView editorView) {

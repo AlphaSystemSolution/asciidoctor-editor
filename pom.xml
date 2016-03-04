@@ -27,19 +27,20 @@
             <version>${fx-support.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.alphasystem.doc</groupId>
+            <artifactId>docbook-2-docx</artifactId>
+            <version>${docbook-2-docx.version}</version>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.asciidoctor</groupId>
-            <artifactId>asciidoctorj</artifactId>
-            <version>1.5.2</version>
         </dependency>
     </dependencies>
     <properties>
         <maven.test.skip>true</maven.test.skip>
         <arabic-ui-support.version>${project.version}</arabic-ui-support.version>
+        <docbook-2-docx.version>${project.version}</docbook-2-docx.version>
         <fx-support.version>${project.version}</fx-support.version>
         <mainClass>com.alphasystem.app.asciidoctoreditor.ui.AsciiDoctorEditorApp</mainClass>
     </properties>

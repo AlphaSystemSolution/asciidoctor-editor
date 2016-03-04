@@ -2,8 +2,8 @@ package com.alphasystem.app.asciidoctoreditor.ui;
 
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
-import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocPropertyInfo;
-import com.alphasystem.app.asciidoctoreditor.ui.model.Backend;
+import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
+import com.alphasystem.asciidoc.model.Backend;
 import com.alphasystem.fx.ui.Browser;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -13,21 +13,19 @@ import javafx.scene.control.IndexRange;
 import javafx.scene.control.TextArea;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
-import org.asciidoctor.ast.DocumentHeader;
 import org.asciidoctor.ast.StructuredDocument;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static com.alphasystem.docbook.DocumentBuilder.buildDocument;
 import static com.alphasystem.util.AppUtil.NEW_LINE;
 import static com.alphasystem.util.AppUtil.getResourceAsStream;
 import static com.alphasystem.util.nio.NIOFileUtils.copyDir;
@@ -35,6 +33,7 @@ import static com.alphasystem.util.nio.NIOFileUtils.fastCopy;
 import static java.lang.Character.isWhitespace;
 import static java.lang.String.format;
 import static java.nio.file.Files.*;
+import static java.nio.file.Paths.get;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.*;
 import static org.apache.commons.io.FilenameUtils.getBaseName;
@@ -51,11 +50,6 @@ public final class ApplicationController implements ApplicationConstants {
     private static final String PREVIEW_FILE_PREFIX = format("_____%s_____", DEFAULT_PREVIEW_FILE_NAME);
     private static final String PREVIEW_FILE_SUFFIX = "_____.html";
     private static ApplicationController instance = new ApplicationController();
-
-    private final Asciidoctor asciidoctor = Asciidoctor.Factory.create();
-
-    private ApplicationController() {
-    }
 
     public static ApplicationController getInstance() {
         return instance;
@@ -88,7 +82,12 @@ public final class ApplicationController implements ApplicationConstants {
         return format("%s%s%s", markupBegin, source, markupEnd);
     }
 
-    public void doNewDocAction(final AsciiDocPropertyInfo propertyInfo, boolean skipCopyResources,
+    private final Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+
+    private ApplicationController() {
+    }
+
+    public void doNewDocAction(final AsciiDocumentInfo propertyInfo, boolean skipCopyResources,
                                EventHandler<WorkerStateEvent> onFailed,
                                EventHandler<WorkerStateEvent> onSucceeded) {
         CopyResourcesService service = new CopyResourcesService(skipCopyResources, propertyInfo);
@@ -97,7 +96,7 @@ public final class ApplicationController implements ApplicationConstants {
         service.start();
     }
 
-    public void doNewDocAction(final AsciiDocPropertyInfo propertyInfo, EventHandler<WorkerStateEvent> onFailed,
+    public void doNewDocAction(final AsciiDocumentInfo propertyInfo, EventHandler<WorkerStateEvent> onFailed,
                                EventHandler<WorkerStateEvent> onSucceeded) {
         doNewDocAction(propertyInfo, false, onFailed, onSucceeded);
     }
@@ -118,7 +117,7 @@ public final class ApplicationController implements ApplicationConstants {
         service.start();
     }
 
-    public void doExport(final AsciiDocPropertyInfo propertyInfo, final String content, final Backend backend,
+    public void doExport(final AsciiDocumentInfo propertyInfo, final String content, final Backend backend,
                          EventHandler<WorkerStateEvent> onFailed, EventHandler<WorkerStateEvent> onSucceeded) {
         ExportDocumentService service = new ExportDocumentService(propertyInfo, content, backend);
         service.setOnFailed(onFailed);
@@ -126,18 +125,28 @@ public final class ApplicationController implements ApplicationConstants {
         service.start();
     }
 
+    public void doExportToWord(final AsciiDocumentInfo propertyInfo, final String content,
+                               EventHandler<WorkerStateEvent> onFailed, EventHandler<WorkerStateEvent> onSucceeded) {
+        ExportToWordService service = new ExportToWordService(propertyInfo, content);
+        service.setOnFailed(onFailed);
+        service.setOnSucceeded(onSucceeded);
+        service.start();
+    }
+
     public void doBold(TextArea editor) {
-        boolean boundaryWord = isBoundaryWord(editor);
-        String markupBegin = boundaryWord ? getMarkupBegin(BOLD_BOUNDARY_KEY) : getMarkupBegin(BOLD_NON_BOUNDARY_KEY);
-        String markupEnd = boundaryWord ? getMarkupEnd(BOLD_BOUNDARY_KEY) : getMarkupEnd(BOLD_NON_BOUNDARY_KEY);
-        int offset = boundaryWord ? 1 : 2;
-        applyMarkup(editor, markupBegin, markupEnd, offset);
+        doBoldOrItalic(editor, true);
     }
 
     public void doItalic(final TextArea editor) {
+        doBoldOrItalic(editor, false);
+    }
+
+    private void doBoldOrItalic(TextArea editor, boolean bold) {
+        String markupBeginBoundaryKey = bold ? BOLD_BOUNDARY_KEY : ITALIC_BOUNDARY_KEY;
+        String markupBeginNonBoundaryKey = bold ? BOLD_NON_BOUNDARY_KEY : ITALIC_NON_BOUNDARY_KEY;
         boolean boundaryWord = isBoundaryWord(editor);
-        String markupBegin = boundaryWord ? getMarkupBegin(ITALIC_BOUNDARY_KEY) : getMarkupBegin(ITALIC_NON_BOUNDARY_KEY);
-        String markupEnd = boundaryWord ? getMarkupEnd(ITALIC_BOUNDARY_KEY) : getMarkupEnd(ITALIC_NON_BOUNDARY_KEY);
+        String markupBegin = boundaryWord ? getMarkupBegin(markupBeginBoundaryKey) : getMarkupBegin(markupBeginNonBoundaryKey);
+        String markupEnd = boundaryWord ? getMarkupEnd(markupBeginBoundaryKey) : getMarkupEnd(markupBeginNonBoundaryKey);
         int offset = boundaryWord ? 1 : 2;
         applyMarkup(editor, markupBegin, markupEnd, offset);
     }
@@ -207,16 +216,14 @@ public final class ApplicationController implements ApplicationConstants {
         return editorView;
     }
 
-    public AsciiDocPropertyInfo readDocPropertyInfo(final File docFile) throws IOException {
-        AsciiDocPropertyInfo propertyInfo = new AsciiDocPropertyInfo();
+    public AsciiDocumentInfo readDocPropertyInfo(final File docFile) throws IOException {
+        AsciiDocumentInfo propertyInfo = new AsciiDocumentInfo();
         propertyInfo.setSrcFile(docFile);
         File baseDir = docFile.getParentFile();
-        boolean existingFie = baseDir != null;
-        if (existingFie) {
+        if (baseDir != null) {
             // existing file
             StructuredDocument structuredDocument = asciidoctor.readDocumentStructure(docFile, new HashMap<>());
-            DocumentHeader header = structuredDocument.getHeader();
-            propertyInfo.populateAttributes(header.getAttributes());
+            propertyInfo.populateAttributes(structuredDocument.getHeader().getAttributes());
         }
         createPreviewFile(propertyInfo, baseDir);
         return propertyInfo;
@@ -227,7 +234,17 @@ public final class ApplicationController implements ApplicationConstants {
         browser.getWebEngine().reload();
     }
 
-    private void createPreviewFile(AsciiDocPropertyInfo propertyInfo, File baseDir) throws IOException {
+    private Path saveDocument(final Path docFile, final String content) throws IOException {
+        final Path path = write(docFile, content.getBytes(), WRITE);
+        System.out.println(content);
+        System.out.println("++++++++++++++++++++++++++++++++++++");
+        final List<String> list = Files.readAllLines(path);
+        list.forEach(s -> System.out.println(s));
+        System.out.println("SOURCE: " + docFile + ", TARGET: " + path);
+        return path;
+    }
+
+    private void createPreviewFile(AsciiDocumentInfo propertyInfo, File baseDir) throws IOException {
         // now populate preview file name, if preview file does not exists copy it
         try (InputStream inputStream = getResourceAsStream(format("templates.%s.html", DEFAULT_PREVIEW_FILE_NAME))) {
             File previewFile = createTempFile(baseDir.toPath(), PREVIEW_FILE_PREFIX, PREVIEW_FILE_SUFFIX).toFile();
@@ -237,7 +254,7 @@ public final class ApplicationController implements ApplicationConstants {
         }
     }
 
-    private void copyResources(final AsciiDocPropertyInfo propertyInfo) throws IOException, URISyntaxException {
+    private void copyResources(final AsciiDocumentInfo propertyInfo) throws IOException, URISyntaxException {
         File baseDir = new File(propertyInfo.getSrcFile().getParent());
         File stylesDir = new File(baseDir, propertyInfo.getStylesDir());
         if (!stylesDir.exists()) {
@@ -248,12 +265,12 @@ public final class ApplicationController implements ApplicationConstants {
         if (isNotBlank(iconFontName)) {
             if ("font-awesome".equals(iconFontName)) {
                 copyDir(stylesDir.toPath(), "templates/font-awesome/css", getClass());
-                copyDir(Paths.get(stylesDir.getParent(), "fonts"), "templates/font-awesome/fonts", getClass());
+                copyDir(get(stylesDir.getParent(), "fonts"), "templates/font-awesome/fonts", getClass());
             }
         }
     }
 
-    private void copyStyleSheet(AsciiDocPropertyInfo propertyInfo, File stylesDir) throws IOException {
+    private void copyStyleSheet(AsciiDocumentInfo propertyInfo, File stylesDir) throws IOException {
         final File srcStyleSheet = propertyInfo.getCustomStyleSheetFile();
         if (srcStyleSheet != null) {
             File targetStyleSheet = new File(stylesDir, srcStyleSheet.getName());
@@ -265,7 +282,7 @@ public final class ApplicationController implements ApplicationConstants {
         }
     }
 
-    private void createNewDocument(AsciiDocPropertyInfo propertyInfo) throws IOException {
+    private void createNewDocument(AsciiDocumentInfo propertyInfo) throws IOException {
         List<String> lines = new ArrayList<>();
         lines.add(format("= %s", propertyInfo.getDocumentTitle()));
         lines.add(format(":doctype: %s", propertyInfo.getDocumentType()));
@@ -342,17 +359,14 @@ public final class ApplicationController implements ApplicationConstants {
             return new Task<String>() {
                 @Override
                 protected String call() throws Exception {
-                    List<String> lines = null;
-                    try {
-                        lines = Files.readAllLines(Paths.get(docFile.toURI()));
-                    } catch (IOException e) {
-                        throw e;
-                    }
                     StringBuilder builder = new StringBuilder();
-                    builder.append(lines.get(0));
-                    for (int i = 1; i < lines.size(); i++) {
-                        builder.append(NEW_LINE).append(lines.get(i));
+                    BufferedReader reader = Files.newBufferedReader(docFile.toPath());
+                    String line = reader.readLine();
+                    while (line != null) {
+                        builder.append(line).append(NEW_LINE);
+                        line = reader.readLine();
                     }
+                    reader.close();
                     return builder.toString();
                 }
             };
@@ -374,7 +388,7 @@ public final class ApplicationController implements ApplicationConstants {
             return new Task<File>() {
                 @Override
                 protected File call() throws Exception {
-                    return write(destFile.toPath(), content.getBytes(), WRITE).toFile();
+                    return saveDocument(destFile.toPath(), content).toFile();
                 }
             };
         }
@@ -383,9 +397,9 @@ public final class ApplicationController implements ApplicationConstants {
     private class CopyResourcesService extends Service<File> {
 
         private final boolean skipCopyResources;
-        private final AsciiDocPropertyInfo propertyInfo;
+        private final AsciiDocumentInfo propertyInfo;
 
-        private CopyResourcesService(boolean skipCopyResources, final AsciiDocPropertyInfo propertyInfo) {
+        private CopyResourcesService(boolean skipCopyResources, final AsciiDocumentInfo propertyInfo) {
             this.skipCopyResources = skipCopyResources;
             this.propertyInfo = propertyInfo;
         }
@@ -405,28 +419,51 @@ public final class ApplicationController implements ApplicationConstants {
         }
     }
 
-    private class ExportDocumentService extends Service<AsciiDocPropertyInfo> {
+    private class ExportDocumentService extends Service<AsciiDocumentInfo> {
 
-        private final AsciiDocPropertyInfo propertyInfo;
+        private final AsciiDocumentInfo documentInfo;
         private final String content;
 
-        private ExportDocumentService(AsciiDocPropertyInfo propertyInfo, String content, Backend backend) {
-            this.propertyInfo = propertyInfo;
-            final File srcFile = propertyInfo.getSrcFile();
+        private ExportDocumentService(AsciiDocumentInfo documentInfo, String content, Backend backend) {
+            this.documentInfo = documentInfo;
+            final File srcFile = documentInfo.getSrcFile();
             final String baseName = getBaseName(srcFile.getName());
             final String fileName = format("%s.%s", baseName, backend.getExtension());
-            propertyInfo.setPreviewFile(new File(srcFile.getParentFile(), fileName));
-            propertyInfo.setBackend(backend.getValue());
+            documentInfo.setPreviewFile(new File(srcFile.getParentFile(), fileName));
+            documentInfo.setBackend(backend.getValue());
             this.content = content;
         }
 
         @Override
-        protected Task<AsciiDocPropertyInfo> createTask() {
-            return new Task<AsciiDocPropertyInfo>() {
+        protected Task<AsciiDocumentInfo> createTask() {
+            return new Task<AsciiDocumentInfo>() {
                 @Override
-                protected AsciiDocPropertyInfo call() throws Exception {
-                    asciidoctor.convert(content, propertyInfo.getOptionsBuilder());
-                    return propertyInfo;
+                protected AsciiDocumentInfo call() throws Exception {
+                    asciidoctor.convert(content, documentInfo.getOptionsBuilder());
+                    return documentInfo;
+                }
+            };
+        }
+    }
+
+    private class ExportToWordService extends Service<Path> {
+
+        private final AsciiDocumentInfo documentInfo;
+        private final String content;
+
+        private ExportToWordService(final AsciiDocumentInfo documentInfo, final String content) {
+            this.documentInfo = documentInfo;
+            this.content = content;
+        }
+
+        @Override
+        protected Task<Path> createTask() {
+            return new Task<Path>() {
+                @Override
+                protected Path call() throws Exception {
+                    final Path srcPath = Paths.get(documentInfo.getSrcFile().getAbsolutePath());
+                    write(srcPath, content.getBytes(), WRITE);
+                    return buildDocument(srcPath);
                 }
             };
         }
