@@ -17,9 +17,7 @@ import org.asciidoctor.ast.StructuredDocument;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -234,16 +232,6 @@ public final class ApplicationController implements ApplicationConstants {
         browser.getWebEngine().reload();
     }
 
-    private Path saveDocument(final Path docFile, final String content) throws IOException {
-        final Path path = write(docFile, content.getBytes(), WRITE);
-        System.out.println(content);
-        System.out.println("++++++++++++++++++++++++++++++++++++");
-        final List<String> list = Files.readAllLines(path);
-        list.forEach(s -> System.out.println(s));
-        System.out.println("SOURCE: " + docFile + ", TARGET: " + path);
-        return path;
-    }
-
     private void createPreviewFile(AsciiDocumentInfo propertyInfo, File baseDir) throws IOException {
         // now populate preview file name, if preview file does not exists copy it
         try (InputStream inputStream = getResourceAsStream(format("templates.%s.html", DEFAULT_PREVIEW_FILE_NAME))) {
@@ -360,13 +348,17 @@ public final class ApplicationController implements ApplicationConstants {
                 @Override
                 protected String call() throws Exception {
                     StringBuilder builder = new StringBuilder();
-                    BufferedReader reader = Files.newBufferedReader(docFile.toPath());
-                    String line = reader.readLine();
-                    while (line != null) {
-                        builder.append(line).append(NEW_LINE);
+                    try (BufferedReader reader = newBufferedReader(docFile.toPath())) {
+                        String line = reader.readLine();
+                        if (line != null) {
+                            builder.append(line);
+                        }
                         line = reader.readLine();
+                        while (line != null) {
+                            builder.append(NEW_LINE).append(line);
+                            line = reader.readLine();
+                        }
                     }
-                    reader.close();
                     return builder.toString();
                 }
             };
@@ -388,7 +380,7 @@ public final class ApplicationController implements ApplicationConstants {
             return new Task<File>() {
                 @Override
                 protected File call() throws Exception {
-                    return saveDocument(destFile.toPath(), content).toFile();
+                    return write(destFile.toPath(), content.getBytes(), WRITE).toFile();
                 }
             };
         }
@@ -461,9 +453,7 @@ public final class ApplicationController implements ApplicationConstants {
             return new Task<Path>() {
                 @Override
                 protected Path call() throws Exception {
-                    final Path srcPath = Paths.get(documentInfo.getSrcFile().getAbsolutePath());
-                    write(srcPath, content.getBytes(), WRITE);
-                    return buildDocument(srcPath);
+                    return buildDocument(content, documentInfo);
                 }
             };
         }
