@@ -29,7 +29,7 @@ public class NewDocumentDialog extends Dialog<AsciiDocumentInfo> {
         getDialogPane().getButtonTypes().addAll(OK, CANCEL);
         final Button okButton = (Button) getDialogPane().lookupButton(OK);
         okButton.disableProperty().bind(view.needRequiredProperty());
-        okButton.addEventFilter(ACTION, this::verfifySourceFile);
+        okButton.addEventFilter(ACTION, this::verfiySourceFile);
         setResultConverter(param -> {
             AsciiDocumentInfo propertyInfo = param.getButtonData().isCancelButton() ? null : view.getPropertyInfo();
             // reset dialog
@@ -38,7 +38,7 @@ public class NewDocumentDialog extends Dialog<AsciiDocumentInfo> {
         });
     }
 
-    private void verfifySourceFile(ActionEvent event) {
+    private void verfiySourceFile(ActionEvent event) {
         final File srcFile = view.getPropertyInfo().getSrcFile();
         // if source files exists then bring dialog to make sure user really wanted to overwrite the file
         if (srcFile.exists()) {
