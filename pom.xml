@@ -27,9 +27,9 @@
             <version>${fx-support.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.alphasystem.doc</groupId>
-            <artifactId>docbook-2-docx</artifactId>
-            <version>${docbook-2-docx.version}</version>
+            <groupId>com.alphasystem.docbook-2-docx</groupId>
+            <artifactId>docx-builder</artifactId>
+            <version>${docx-builder.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -40,7 +40,7 @@
     <properties>
         <maven.test.skip>true</maven.test.skip>
         <arabic-ui-support.version>${project.version}</arabic-ui-support.version>
-        <docbook-2-docx.version>${project.version}</docbook-2-docx.version>
+        <docx-builder.version>${project.version}</docx-builder.version>
         <fx-support.version>${project.version}</fx-support.version>
         <mainClass>com.alphasystem.app.asciidoctoreditor.ui.AsciiDoctorEditorApp</mainClass>
     </properties>
