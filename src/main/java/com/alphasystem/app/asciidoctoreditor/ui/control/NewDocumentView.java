@@ -255,8 +255,7 @@ public class NewDocumentView extends Control {
     }
 
     private void updateNeedRequired() {
-        needRequired.set((getDocumentType() == null) || isBlank(getDocumentName()) || isBlank(getDocumentTitle())
-                || isBlank(getBaseDir()));
+        needRequired.set((getDocumentType() == null) || isBlank(getDocumentName()) || isBlank(getBaseDir()));
     }
 
     @Override

@@ -60,7 +60,7 @@
                 </graphic>
             </Label>
             <Label fx:id="documentTitleLabel" text="%documentTitle.text" contentDisplay="RIGHT"
-                   style="-fx-font-weight: bold" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                  GridPane.columnIndex="2" GridPane.rowIndex="2">
                 <tooltip>
                     <Tooltip text="%documentTitle.toolTip"/>
                 </tooltip>
