@@ -93,7 +93,7 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
         void initialize() {
             final NewDocumentView view = getSkinnable();
 
-            documentTypeComboBox.getSelectionModel().select(0);
+            documentTypeComboBox.getSelectionModel().select(1);
             documentTypeComboBox.valueProperty().bindBidirectional(view.documentTypeProperty());
             documentNameField.textProperty().bindBidirectional(view.documentNameProperty());
             baseDirectoryField.textProperty().bindBidirectional(view.baseDirProperty());
