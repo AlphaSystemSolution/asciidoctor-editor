@@ -657,13 +657,6 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
 
     private void saveDocument() {
         // do nothing file should have been saved already
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println(currentEditor.getText());
-        System.out.println();
-        System.out.println();
-        System.out.println();
     }
 
     private void addTab(AsciiDoctorEditorView editorView) {
