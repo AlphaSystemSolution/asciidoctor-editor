@@ -48,6 +48,7 @@ import static com.alphasystem.fx.ui.util.UiUtilities.waitCursor;
 import static com.alphasystem.util.AppUtil.USER_HOME_DIR;
 import static com.alphasystem.util.AppUtil.isInstanceOf;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * @author sali
@@ -306,7 +307,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
             if (nv == null) {
                 return;
             }
-            int oldTextLength = ov == null ? -1 : ov.length();
+            int oldTextLength = isBlank(ov) ? -1 : ov.length();
             int end = startCaretPosition + oldTextLength;
             if (oldTextLength > -1 && end < currentEditor.getText().length()) {
                 try {
