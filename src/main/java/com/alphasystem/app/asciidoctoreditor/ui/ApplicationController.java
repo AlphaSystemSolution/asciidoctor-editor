@@ -15,8 +15,12 @@ import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.ast.StructuredDocument;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +28,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static com.alphasystem.docbook.DocumentBuilder.buildDocument;
-import static com.alphasystem.util.AppUtil.NEW_LINE;
 import static com.alphasystem.util.AppUtil.getResourceAsStream;
 import static com.alphasystem.util.nio.NIOFileUtils.copyDir;
 import static com.alphasystem.util.nio.NIOFileUtils.fastCopy;
@@ -347,19 +350,7 @@ public final class ApplicationController implements ApplicationConstants {
             return new Task<String>() {
                 @Override
                 protected String call() throws Exception {
-                    StringBuilder builder = new StringBuilder();
-                    try (BufferedReader reader = newBufferedReader(docFile.toPath())) {
-                        String line = reader.readLine();
-                        if (line != null) {
-                            builder.append(line);
-                        }
-                        line = reader.readLine();
-                        while (line != null) {
-                            builder.append(NEW_LINE).append(line);
-                            line = reader.readLine();
-                        }
-                    }
-                    return builder.toString();
+                    return new String(Files.readAllBytes(docFile.toPath()));
                 }
             };
         }
@@ -380,7 +371,12 @@ public final class ApplicationController implements ApplicationConstants {
             return new Task<File>() {
                 @Override
                 protected File call() throws Exception {
-                    return write(destFile.toPath(), content.getBytes(), WRITE).toFile();
+                    System.out.println("++++++++++++++++++++++++++++++++++++");
+                    System.out.println(content);
+                    System.out.println(destFile.getAbsolutePath());
+                    System.out.println("++++++++++++++++++++++++++++++++++++");
+                    System.out.println();
+                    return write(destFile.toPath(), content.getBytes(), WRITE, SYNC).toFile();
                 }
             };
         }
