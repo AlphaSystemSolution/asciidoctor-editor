@@ -299,6 +299,16 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         keyboardView = new ArabicKeyboard();
         keyboardPopup.setAutoHide(true);
         keyboardPopup.setHideOnEscape(true);
+        keyboardPopup.setOnAutoHide(event -> {
+            System.out.println("OnAutoHide");
+            startCaretPosition = -1;
+            keyboardView.setClearText(true);
+        });
+        keyboardPopup.setOnHiding(event -> {
+            System.out.println("OnHiding");
+            startCaretPosition = -1;
+            keyboardView.setClearText(true);
+        });
         keyboardPopup.getContent().add(keyboardView);
 
         initialFile.addListener((o, ov, nv) -> updateFile(nv));
@@ -307,15 +317,19 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
             if (nv == null) {
                 return;
             }
-            int oldTextLength = isBlank(ov) ? -1 : ov.length();
+            final String selectedText = currentEditor.getSelectedText();
+            int oldTextLength = isBlank(selectedText) ? -1 : selectedText.length();
             int end = startCaretPosition + oldTextLength;
+            System.out.println(String.format("Old Text Length: %s, End: %s", oldTextLength, end));
             if (oldTextLength > -1 && end < currentEditor.getText().length()) {
+                System.out.println("Replace");
                 try {
                     currentEditor.replaceText(startCaretPosition, end, nv);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
+                System.out.println("Insert");
                 currentEditor.insertText(startCaretPosition, nv);
             }
         });
@@ -591,8 +605,9 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
             keyboardPopup.hide();
             startCaretPosition = -1;
         } else {
-            keyboardView.setClearText(true);
+            System.out.println(String.format("Start Caret position before: %s", startCaretPosition));
             startCaretPosition = currentEditor.getCaretPosition();
+            System.out.println(String.format("Start Caret position after: %s", startCaretPosition));
             Button button = (Button) event.getSource();
             final Bounds bounds = button.localToScreen(button.getBoundsInLocal());
             keyboardPopup.show(button, bounds.getMinX(), bounds.getMinY() + bounds.getHeight());
