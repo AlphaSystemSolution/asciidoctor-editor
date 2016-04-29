@@ -317,8 +317,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
             if (nv == null) {
                 return;
             }
-            final String selectedText = currentEditor.getSelectedText();
-            int oldTextLength = isBlank(selectedText) ? -1 : selectedText.length();
+            int oldTextLength = isBlank(ov) ? -1 : ov.length();
             int end = startCaretPosition + oldTextLength;
             System.out.println(String.format("Old Text Length: %s, End: %s", oldTextLength, end));
             if (oldTextLength > -1 && end < currentEditor.getText().length()) {
