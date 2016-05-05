@@ -217,7 +217,7 @@ public final class ApplicationController implements ApplicationConstants {
         return editorView;
     }
 
-    public AsciiDocumentInfo readDocPropertyInfo(final File docFile) throws IOException {
+    private AsciiDocumentInfo readDocPropertyInfo(final File docFile) throws IOException {
         AsciiDocumentInfo propertyInfo = new AsciiDocumentInfo();
         propertyInfo.setSrcFile(docFile);
         File baseDir = docFile.getParentFile();
