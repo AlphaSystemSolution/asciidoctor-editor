@@ -371,7 +371,7 @@ public final class ApplicationController implements ApplicationConstants {
             return new Task<File>() {
                 @Override
                 protected File call() throws Exception {
-                    return write(destFile.toPath(), content.getBytes(), WRITE, SYNC).toFile();
+                    return write(destFile.toPath(), content.getBytes()).toFile();
                 }
             };
         }
