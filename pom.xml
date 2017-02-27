@@ -36,12 +36,18 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.alphasystem.arabic</groupId>
+            <artifactId>morphological-engine</artifactId>
+            <version>${morphological-engine.version}</version>
+        </dependency>
     </dependencies>
     <properties>
         <maven.test.skip>true</maven.test.skip>
         <arabic-ui-support.version>${project.version}</arabic-ui-support.version>
         <docx-builder.version>${project.version}</docx-builder.version>
         <fx-support.version>${project.version}</fx-support.version>
+        <morphological-engine.version>${project.version}</morphological-engine.version>
         <mainClass>com.alphasystem.app.asciidoctoreditor.ui.AsciiDoctorEditorApp</mainClass>
     </properties>
 </project>

@@ -13,7 +13,10 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static javafx.event.ActionEvent.ACTION;
 import static javafx.scene.control.Alert.AlertType.WARNING;
-import static javafx.scene.control.ButtonType.*;
+import static javafx.scene.control.ButtonType.CANCEL;
+import static javafx.scene.control.ButtonType.NO;
+import static javafx.scene.control.ButtonType.OK;
+import static javafx.scene.control.ButtonType.YES;
 
 /**
  * @author sali
@@ -29,7 +32,7 @@ public class NewDocumentDialog extends Dialog<AsciiDocumentInfo> {
         getDialogPane().getButtonTypes().addAll(OK, CANCEL);
         final Button okButton = (Button) getDialogPane().lookupButton(OK);
         okButton.disableProperty().bind(view.needRequiredProperty());
-        okButton.addEventFilter(ACTION, this::verfiySourceFile);
+        okButton.addEventFilter(ACTION, this::verifySourceFile);
         setResultConverter(param -> {
             AsciiDocumentInfo propertyInfo = param.getButtonData().isCancelButton() ? null : view.getPropertyInfo();
             // reset dialog
@@ -38,7 +41,7 @@ public class NewDocumentDialog extends Dialog<AsciiDocumentInfo> {
         });
     }
 
-    private void verfiySourceFile(ActionEvent event) {
+    private void verifySourceFile(ActionEvent event) {
         final File srcFile = view.getPropertyInfo().getSrcFile();
         // if source files exists then bring dialog to make sure user really wanted to overwrite the file
         if (srcFile.exists()) {
