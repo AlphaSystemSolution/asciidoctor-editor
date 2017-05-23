@@ -1,19 +1,20 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control.skin;
 
+import java.io.IOException;
+import java.net.URL;
+
+import org.asciidoctor.OptionsBuilder;
+
 import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
 import com.alphasystem.fx.ui.Browser;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.SkinBase;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
-import org.asciidoctor.OptionsBuilder;
-
-import java.io.IOException;
-import java.net.URL;
-
 import static java.util.ResourceBundle.getBundle;
 
 /**
@@ -29,7 +30,7 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
         getChildren().setAll(skinView);
     }
 
-    public final TextArea getEditor() {
+    public final AsciiDoctorTextArea getEditor() {
         return skinView.editor;
     }
 
@@ -44,7 +45,7 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
         private Tab previewTab;
 
         @FXML
-        private TextArea editor;
+        private AsciiDoctorTextArea editor;
 
         @FXML
         private Browser preview;
@@ -71,7 +72,11 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
             view.previewFileProperty().addListener((o, ov, nv) -> preview.loadUrl(nv));
 
             editor.setWrapText(true);
-            editor.textProperty().bindBidirectional(view.contentProperty());
+            editor.textProperty().addListener((observable, oldValue, newValue) -> view.setContent(newValue));
+            view.contentProperty().addListener((observable, oldValue, newValue) -> {
+                editor.replaceSelection(newValue);
+            });
+            view.contentProperty().bind(editor.textProperty());
             preview.loadUrl(view.getPreviewFile());
 
             sourceTab.selectedProperty().addListener((o, ov, nv) -> {

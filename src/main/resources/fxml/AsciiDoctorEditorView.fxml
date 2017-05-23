@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea?>
 <?import com.alphasystem.fx.ui.Browser?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.text.Font?>
 <fx:root xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.layout.BorderPane"
          xmlns="http://javafx.com/javafx/8.0.40">
     <center>
@@ -12,11 +14,7 @@
                 <BorderPane>
                     <center>
                         <ScrollPane vbarPolicy="AS_NEEDED" hbarPolicy="AS_NEEDED" fitToWidth="true" fitToHeight="true">
-                            <TextArea fx:id="editor">
-                                <font>
-                                    <Font name="Courier New" size="14.0"/>
-                                </font>
-                            </TextArea>
+                            <AsciiDoctorTextArea fx:id="editor"/>
                         </ScrollPane>
                     </center>
                 </BorderPane>

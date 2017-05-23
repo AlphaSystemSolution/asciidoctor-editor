@@ -1,14 +1,20 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
-import com.alphasystem.app.asciidoctoreditor.ui.control.skin.AsciiDoctorEditorSkin;
-import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
-import javafx.beans.property.*;
-import javafx.scene.control.Control;
-import javafx.scene.control.Skin;
-import javafx.scene.control.TextArea;
-
 import java.io.File;
 
+import com.alphasystem.app.asciidoctoreditor.ui.control.skin.AsciiDoctorEditorSkin;
+import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
+
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.control.Control;
+import javafx.scene.control.Skin;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -77,7 +83,7 @@ public class AsciiDoctorEditorView extends Control {
         this.previewSelected.set(previewSelected);
     }
 
-    public final TextArea getEditor() {
+    public final AsciiDoctorTextArea getEditor() {
         return ((AsciiDoctorEditorSkin) getSkin()).getEditor();
     }
 

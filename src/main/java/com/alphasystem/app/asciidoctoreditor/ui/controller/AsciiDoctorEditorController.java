@@ -1,8 +1,17 @@
 package com.alphasystem.app.asciidoctoreditor.ui.controller;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
+import java.util.Optional;
+
 import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditor;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
 import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentDialog;
 import com.alphasystem.app.asciidoctoreditor.ui.model.Action;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
@@ -10,6 +19,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode;
 import com.alphasystem.arabic.ui.keyboard.ArabicKeyboard;
 import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import com.alphasystem.asciidoc.model.Backend;
+
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -22,27 +32,24 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.*;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-
-import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Path;
-import java.util.Optional;
-
-import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.*;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.NEW;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.OPEN;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.SAVE;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.EMBEDDED;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.STANDALONE;
-import static com.alphasystem.asciidoc.model.Backend.*;
+import static com.alphasystem.asciidoc.model.Backend.DOC_BOOK;
+import static com.alphasystem.asciidoc.model.Backend.HTML;
+import static com.alphasystem.asciidoc.model.Backend.WORD;
 import static com.alphasystem.fx.ui.util.UiUtilities.defaultCursor;
 import static com.alphasystem.fx.ui.util.UiUtilities.waitCursor;
 import static com.alphasystem.util.AppUtil.USER_HOME_DIR;
@@ -65,7 +72,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     private ObjectProperty<ApplicationMode> applicationMode = new SimpleObjectProperty<>(null, "applicationMode");
     private AsciiDoctorEditor view;
     private AsciiDoctorEditorView currentEditorView;
-    private TextArea currentEditor;
+    private AsciiDoctorTextArea currentEditor;
     private int startCaretPosition = -1;
 
     @FXML

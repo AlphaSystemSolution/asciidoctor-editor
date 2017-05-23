@@ -1,20 +1,5 @@
 package com.alphasystem.app.asciidoctoreditor.ui;
 
-import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
-import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
-import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
-import com.alphasystem.asciidoc.model.Backend;
-import com.alphasystem.fx.ui.Browser;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.IndexRange;
-import javafx.scene.control.TextArea;
-import org.asciidoctor.Asciidoctor;
-import org.asciidoctor.OptionsBuilder;
-import org.asciidoctor.ast.StructuredDocument;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,16 +12,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.OptionsBuilder;
+import org.asciidoctor.ast.StructuredDocument;
+
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
+import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
+import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
+import com.alphasystem.asciidoc.model.Backend;
+import com.alphasystem.fx.ui.Browser;
+
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.IndexRange;
 import static com.alphasystem.docbook.DocumentBuilder.buildDocument;
 import static com.alphasystem.util.AppUtil.getResourceAsStream;
 import static com.alphasystem.util.nio.NIOFileUtils.copyDir;
 import static com.alphasystem.util.nio.NIOFileUtils.fastCopy;
 import static java.lang.Character.isWhitespace;
 import static java.lang.String.format;
-import static java.nio.file.Files.*;
+import static java.nio.file.Files.copy;
+import static java.nio.file.Files.createTempFile;
+import static java.nio.file.Files.newInputStream;
+import static java.nio.file.Files.newOutputStream;
+import static java.nio.file.Files.write;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static java.nio.file.StandardOpenOption.*;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.READ;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -134,15 +141,15 @@ public final class ApplicationController implements ApplicationConstants {
         service.start();
     }
 
-    public void doBold(TextArea editor) {
+    public void doBold(AsciiDoctorTextArea editor) {
         doBoldOrItalic(editor, true);
     }
 
-    public void doItalic(final TextArea editor) {
+    public void doItalic(final AsciiDoctorTextArea editor) {
         doBoldOrItalic(editor, false);
     }
 
-    private void doBoldOrItalic(TextArea editor, boolean bold) {
+    private void doBoldOrItalic(AsciiDoctorTextArea editor, boolean bold) {
         String markupBeginBoundaryKey = bold ? BOLD_BOUNDARY_KEY : ITALIC_BOUNDARY_KEY;
         String markupBeginNonBoundaryKey = bold ? BOLD_NON_BOUNDARY_KEY : ITALIC_NON_BOUNDARY_KEY;
         boolean boundaryWord = isBoundaryWord(editor);
@@ -152,23 +159,23 @@ public final class ApplicationController implements ApplicationConstants {
         applyMarkup(editor, markupBegin, markupEnd, offset);
     }
 
-    public void doUnderline(final TextArea editor) {
+    public void doUnderline(final AsciiDoctorTextArea editor) {
         applyMarkup(editor, getMarkupBegin(UNDERLINE_KEY), getMarkupEnd(UNDERLINE_KEY), 0);
     }
 
-    public void doStrikeThrough(final TextArea editor) {
+    public void doStrikeThrough(final AsciiDoctorTextArea editor) {
         applyMarkup(editor, getMarkupBegin(STRIKETHROUGH_KEY), getMarkupEnd(STRIKETHROUGH_KEY), 0);
     }
 
-    public void doSubscript(final TextArea editor) {
+    public void doSubscript(final AsciiDoctorTextArea editor) {
         applyMarkup(editor, getMarkupBegin(SUBSCRIPT_KEY), getMarkupEnd(SUBSCRIPT_KEY), 0);
     }
 
-    public void doSuperscript(final TextArea editor) {
+    public void doSuperscript(final AsciiDoctorTextArea editor) {
         applyMarkup(editor, getMarkupBegin(SUPERSCRIPT_KEY), getMarkupEnd(SUPERSCRIPT_KEY), 0);
     }
 
-    public void doHeading(final TextArea editor) {
+    public void doHeading(final AsciiDoctorTextArea editor) {
         String text = editor.getText();
         final int caretPosition = editor.getCaretPosition();
         if (caretPosition < 0) {
@@ -183,26 +190,26 @@ public final class ApplicationController implements ApplicationConstants {
         editor.insertText(indexOfNewLine + 1, insert);
     }
 
-    public void doLink(final TextArea editor) {
+    public void doLink(final AsciiDoctorTextArea editor) {
         applyMarkup(editor, getMarkupBegin(LINK_KEY), getMarkupEnd(LINK_KEY), 13);
         editor.selectRange(editor.getAnchor(), editor.getCaretPosition() + 3);
     }
 
-    public void doCode(final TextArea editor) {
+    public void doCode(final AsciiDoctorTextArea editor) {
         applyMarkup(editor, getMarkupBegin(SOURCE_CODE_KEY), getMarkupEnd(SOURCE_CODE_KEY), 13);
     }
 
-    public void doAdmonition(final TextArea editor, final String admonitionTypeKey) {
+    public void doAdmonition(final AsciiDoctorTextArea editor, final String admonitionTypeKey) {
         final String markupBegin = format("%s%s", getMarkupBegin(admonitionTypeKey), getMarkupBegin(ADMONITION_KEY));
         final String markupEnd = getMarkupEnd(ADMONITION_KEY);
         applyMarkup(editor, markupBegin, markupEnd, 6);
     }
 
-    public void doHtmlSymbols(final TextArea editor, final String key) {
+    public void doHtmlSymbols(final AsciiDoctorTextArea editor, final String key) {
         editor.replaceSelection(getMarkupBegin(key));
     }
 
-    public void doBlock(final TextArea editor, final String blockTypeKey) {
+    public void doBlock(final AsciiDoctorTextArea editor, final String blockTypeKey) {
         applyMarkup(editor, getMarkupBegin(blockTypeKey), getMarkupEnd(blockTypeKey), 6);
     }
 
@@ -309,7 +316,7 @@ public final class ApplicationController implements ApplicationConstants {
         write(propertyInfo.getSrcFile().toPath(), lines, CREATE, WRITE);
     }
 
-    private boolean isBoundaryWord(TextArea editor) {
+    private boolean isBoundaryWord(AsciiDoctorTextArea editor) {
         IndexRange selection = editor.getSelection();
         boolean boundaryWord = true;
         try {
@@ -327,7 +334,7 @@ public final class ApplicationController implements ApplicationConstants {
         return boundaryWord;
     }
 
-    private void applyMarkup(TextArea editor, String markupBegin, String markupEnd, int offset) {
+    private void applyMarkup(AsciiDoctorTextArea editor, String markupBegin, String markupEnd, int offset) {
         editor.replaceSelection(formatText(editor.getSelectedText(), markupBegin, markupEnd));
         if (isBlank(editor.getSelectedText())) {
             for (int i = 1; i <= offset; i++) {
@@ -336,6 +343,7 @@ public final class ApplicationController implements ApplicationConstants {
         }
         editor.requestFocus();
     }
+
 
     private class OpenDocService extends Service<String> {
 
