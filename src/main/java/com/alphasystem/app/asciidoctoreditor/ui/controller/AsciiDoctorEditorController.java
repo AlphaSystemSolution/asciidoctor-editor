@@ -8,18 +8,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
-import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditor;
-import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
-import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
-import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentDialog;
-import com.alphasystem.app.asciidoctoreditor.ui.model.Action;
-import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
-import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode;
-import com.alphasystem.arabic.ui.keyboard.ArabicKeyboard;
-import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
-import com.alphasystem.asciidoc.model.Backend;
-
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -30,18 +18,34 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+
+import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditor;
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
+import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentDialog;
+import com.alphasystem.app.asciidoctoreditor.ui.model.Action;
+import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
+import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode;
+import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
+import com.alphasystem.arabic.ui.keyboard.ArabicKeyboard;
+import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
+import com.alphasystem.asciidoc.model.Backend;
+
 import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.NEW;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.OPEN;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.SAVE;
@@ -160,22 +164,22 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     private Button pasteButton;
 
     @FXML
-    private MenuItem boldMenuItem;
+    private CheckMenuItem boldMenuItem;
 
     @FXML
-    private Button boldButton;
+    private ToggleButton boldButton;
 
     @FXML
-    private MenuItem italicMenuItem;
+    private CheckMenuItem italicMenuItem;
 
     @FXML
-    private Button italicButton;
+    private ToggleButton italicButton;
 
     @FXML
-    private MenuItem underlineMenuItem;
+    private CheckMenuItem underlineMenuItem;
 
     @FXML
-    private Button underlineButton;
+    private ToggleButton underlineButton;
 
     @FXML
     private MenuItem strikethroughMenuItem;
@@ -334,6 +338,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
                 currentEditor.insertText(startCaretPosition, nv);
             }
         });
+
     }
 
     public final ObjectProperty<File> initialFileProperty() {
@@ -675,6 +680,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     }
 
     private void addTab(AsciiDoctorEditorView editorView) {
+        updateToolBar(editorView);
         Tab tab = new Tab(editorView.getPropertyInfo().getSrcFile().getName(), editorView);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);
@@ -685,6 +691,22 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         editorView.getEditor().end();
         editorView.getEditor().requestFocus();
         defaultCursor(view);
+    }
+
+    private void updateToolBar(AsciiDoctorEditorView editorView){
+        final EditorState editorState = editorView.getEditorState();
+        editorState.boldProperty().addListener((observable, oldValue, newValue) -> {
+            boldButton.setSelected(newValue);
+            boldMenuItem.setSelected(newValue);
+        });
+        editorState.italicProperty().addListener((observable, oldValue, newValue) -> {
+            italicButton.setSelected(newValue);
+            italicMenuItem.setSelected(newValue);
+        });
+        editorState.underlineProperty().addListener((observable, oldValue, newValue) -> {
+            underlineButton.setSelected(newValue);
+            underlineMenuItem.setSelected(newValue);
+        });
     }
 
     private void updateFile(File file) {

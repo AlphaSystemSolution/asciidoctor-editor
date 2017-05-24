@@ -2,9 +2,6 @@ package com.alphasystem.app.asciidoctoreditor.ui.control;
 
 import java.io.File;
 
-import com.alphasystem.app.asciidoctoreditor.ui.control.skin.AsciiDoctorEditorSkin;
-import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -15,6 +12,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
+
+import com.alphasystem.app.asciidoctoreditor.ui.control.skin.AsciiDoctorEditorSkin;
+import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
+import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
+
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -26,6 +28,7 @@ public class AsciiDoctorEditorView extends Control {
     private final StringProperty content = new SimpleStringProperty(null, "content");
     private final ReadOnlyObjectWrapper<File> previewFile = new ReadOnlyObjectWrapper<>(null, "previewFile");
     private final BooleanProperty previewSelected = new SimpleBooleanProperty(false, "previewSelected");
+    private final EditorState editorState = new EditorState();
 
     public AsciiDoctorEditorView() {
         super();
@@ -81,6 +84,10 @@ public class AsciiDoctorEditorView extends Control {
 
     public final void setPreviewSelected(boolean previewSelected) {
         this.previewSelected.set(previewSelected);
+    }
+
+    public final EditorState getEditorState() {
+        return editorState;
     }
 
     public final AsciiDoctorTextArea getEditor() {

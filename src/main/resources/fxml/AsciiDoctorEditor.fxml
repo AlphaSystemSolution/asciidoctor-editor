@@ -84,24 +84,24 @@
                     </MenuItem>
                 </Menu>
                 <Menu text="%format.menu.text">
-                    <MenuItem fx:id="boldMenuItem" text="%bold.text" accelerator="SHORTCUT+B"
+                    <CheckMenuItem fx:id="boldMenuItem" text="%bold.text" accelerator="SHORTCUT+B"
                               onAction="#boldAction">
                         <graphic>
                             <FontAwesomeIconView glyphName="%bold.icon"/>
                         </graphic>
-                    </MenuItem>
-                    <MenuItem fx:id="italicMenuItem" text="%italic.text" accelerator="SHORTCUT+I"
+                    </CheckMenuItem>
+                    <CheckMenuItem fx:id="italicMenuItem" text="%italic.text" accelerator="SHORTCUT+I"
                               onAction="#italicAction">
                         <graphic>
                             <FontAwesomeIconView glyphName="%italic.icon"/>
                         </graphic>
-                    </MenuItem>
-                    <MenuItem fx:id="underlineMenuItem" text="%underline.text" accelerator="SHORTCUT+U"
+                    </CheckMenuItem>
+                    <CheckMenuItem fx:id="underlineMenuItem" text="%underline.text" accelerator="SHORTCUT+U"
                               onAction="#underlineAction">
                         <graphic>
                             <FontAwesomeIconView glyphName="%underline.icon"/>
                         </graphic>
-                    </MenuItem>
+                    </CheckMenuItem>
                     <MenuItem fx:id="strikethroughMenuItem" text="%strikethrough.text" onAction="#strikethroughAction">
                         <graphic>
                             <FontAwesomeIconView glyphName="%strikethrough.icon"/>
@@ -257,30 +257,30 @@
                     </tooltip>
                 </Button>
                 <Separator/>
-                <Button fx:id="boldButton" onAction="#boldAction">
+                <ToggleButton fx:id="boldButton" onAction="#boldAction">
                     <graphic>
                         <FontAwesomeIconView glyphName="%bold.icon" size="%toolbarButton.size"/>
                     </graphic>
                     <tooltip>
                         <Tooltip text="%bold.toolTip"/>
                     </tooltip>
-                </Button>
-                <Button fx:id="italicButton" onAction="#italicAction">
+                </ToggleButton>
+                <ToggleButton fx:id="italicButton" onAction="#italicAction">
                     <graphic>
                         <FontAwesomeIconView glyphName="%italic.icon" size="%toolbarButton.size"/>
                     </graphic>
                     <tooltip>
                         <Tooltip text="%italic.toolTip"/>
                     </tooltip>
-                </Button>
-                <Button fx:id="underlineButton" onAction="#underlineAction">
+                </ToggleButton>
+                <ToggleButton fx:id="underlineButton" onAction="#underlineAction">
                     <graphic>
                         <FontAwesomeIconView glyphName="%underline.icon" size="%toolbarButton.size"/>
                     </graphic>
                     <tooltip>
                         <Tooltip text="%underline.toolTip"/>
                     </tooltip>
-                </Button>
+                </ToggleButton>
                 <Button fx:id="strikethroughButton" onAction="#strikethroughAction">
                     <graphic>
                         <FontAwesomeIconView glyphName="%strikethrough.icon" size="%toolbarButton.size"/>
