@@ -12,9 +12,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.IndexRange;
+
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.ast.StructuredDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
@@ -23,11 +31,6 @@ import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import com.alphasystem.asciidoc.model.Backend;
 import com.alphasystem.fx.ui.Browser;
 
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.IndexRange;
 import static com.alphasystem.docbook.DocumentBuilder.buildDocument;
 import static com.alphasystem.util.AppUtil.getResourceAsStream;
 import static com.alphasystem.util.nio.NIOFileUtils.copyDir;
@@ -53,10 +56,13 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  */
 public final class ApplicationController implements ApplicationConstants {
 
-    public static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("AsciiDoctorEditor");
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("AsciiDoctorEditor");
     private static final String DEFAULT_PREVIEW_FILE_NAME = "preview";
     private static final String PREVIEW_FILE_PREFIX = format("_____%s_____", DEFAULT_PREVIEW_FILE_NAME);
     private static final String PREVIEW_FILE_SUFFIX = "_____.html";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
+    private static final String MARKUP_STYLE_NAME = "markup";
+    private static final String PLACE_HOLDER_TEXT = "place holder";
     private static ApplicationController instance = new ApplicationController();
 
     public static ApplicationController getInstance() {
@@ -84,6 +90,10 @@ public final class ApplicationController implements ApplicationConstants {
 
     private static String getMarkupEnd(String key) {
         return getValue(format("%s.markupEnd", key), "");
+    }
+
+    private static String getStyleName(String key) {
+        return getValue(format("%s.styleName", key));
     }
 
     private static String formatText(String source, String markupBegin, String markupEnd) {
@@ -156,19 +166,20 @@ public final class ApplicationController implements ApplicationConstants {
         String markupBegin = boundaryWord ? getMarkupBegin(markupBeginBoundaryKey) : getMarkupBegin(markupBeginNonBoundaryKey);
         String markupEnd = boundaryWord ? getMarkupEnd(markupBeginBoundaryKey) : getMarkupEnd(markupBeginNonBoundaryKey);
         int offset = boundaryWord ? 1 : 2;
-        applyMarkup(editor, markupBegin, markupEnd, offset);
+        final String styleName = bold ? getStyleName(BOLD_KEY) : getStyleName(ITALIC_KEY);
+        applyMarkup(editor, styleName, markupBegin, markupEnd, offset);
     }
 
     public void doUnderline(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, getMarkupBegin(UNDERLINE_KEY), getMarkupEnd(UNDERLINE_KEY), 0);
+        applyMarkup(editor, getStyleName(UNDERLINE_KEY), getMarkupBegin(UNDERLINE_KEY), getMarkupEnd(UNDERLINE_KEY), 0);
     }
 
     public void doStrikeThrough(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, getMarkupBegin(STRIKETHROUGH_KEY), getMarkupEnd(STRIKETHROUGH_KEY), 0);
+        applyMarkup(editor, getStyleName(STRIKETHROUGH_KEY), getMarkupBegin(STRIKETHROUGH_KEY), getMarkupEnd(STRIKETHROUGH_KEY), 0);
     }
 
     public void doSubscript(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, getMarkupBegin(SUBSCRIPT_KEY), getMarkupEnd(SUBSCRIPT_KEY), 0);
+        applyMarkup(editor, getStyleName(SUBSCRIPT_KEY), getMarkupBegin(SUBSCRIPT_KEY), getMarkupEnd(SUBSCRIPT_KEY), 0);
     }
 
     public void doSuperscript(final AsciiDoctorTextArea editor) {
@@ -342,6 +353,65 @@ public final class ApplicationController implements ApplicationConstants {
             }
         }
         editor.requestFocus();
+    }
+
+    private void applyMarkup(AsciiDoctorTextArea editor, String styleName, String markupBegin, String markupEnd, int offset) {
+        final IndexRange range = editor.getSelection();
+        int start = -1;
+        int end = 0;
+        final boolean hasSelection = (range != null) && (range.getLength() > 0);
+        if (hasSelection) {
+            // get the start and end of current range
+            start = range.getStart();
+            end = range.getEnd();
+        } else {
+            // when there is no selected text
+            start = editor.getCaretPosition();
+            end = start + PLACE_HOLDER_TEXT.length();
+
+            // if nothing was selected and user just clicked the button then insert the place holder text
+            editor.insertText(start, PLACE_HOLDER_TEXT);
+        }
+
+        if (start < 0) {
+            // don't know where to insert
+            LOGGER.warn("Unable find start index of insertion for style: {}, start index: {}, end index: {}",
+                    styleName, start, end);
+            return;
+        }
+
+        // gets all the style at the current range
+        // if there are other style(s) applied at this range then we won't override previous styles
+        List<String> styles = new ArrayList<>();
+        styles.addAll(editor.getStyleAtPosition(end - 1));
+
+        if (styles.contains(styleName)) {
+            // style is already exists, we need to remove it
+            return;
+        }
+
+        // insert the markup begin and apply class
+        editor.insertText(start, markupBegin);
+        editor.setStyleClass(start, start + markupBegin.length(), MARKUP_STYLE_NAME);
+
+        // update the start and end values
+        start += markupBegin.length();
+        end += markupBegin.length();
+
+        // insert markup end
+        editor.insertText(end, markupEnd);
+
+        // apply the style to the actual text
+        styles.add(styleName);
+        editor.setStyle(start, end, styles);
+
+        // apply the style for markup end
+        editor.setStyleClass(end, end + markupEnd.length(), MARKUP_STYLE_NAME);
+
+        if (hasSelection) {
+            // re-select the text
+            editor.selectRange(start, editor.getCaretPosition() - 1);
+        }
     }
 
 
