@@ -29,7 +29,6 @@ import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
 import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import com.alphasystem.asciidoc.model.Backend;
-import com.alphasystem.fx.ui.Browser;
 
 import static com.alphasystem.docbook.DocumentBuilder.buildDocument;
 import static com.alphasystem.util.nio.NIOFileUtils.copyDir;
@@ -243,8 +242,8 @@ public final class ApplicationController implements ApplicationConstants {
         return propertyInfo;
     }
 
-    public void refreshPreview(OptionsBuilder optionsBuilder, String content, Browser browser) {
-        browser.loadContent(asciidoctor.convert(content, optionsBuilder));
+    public String refreshPreview(OptionsBuilder optionsBuilder, String content) {
+        return asciidoctor.convert(content, optionsBuilder);
     }
 
     private void copyResources(final AsciiDocumentInfo propertyInfo) throws IOException, URISyntaxException {

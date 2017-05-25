@@ -150,7 +150,7 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
             final AttributesBuilder attributesBuilder = AttributesBuilder.attributes().linkCss(false);
             OptionsBuilder optionsBuilder = getSkinnable().getPropertyInfo().getOptionsBuilder().headerFooter(true)
                     .toFile(false).attributes(attributesBuilder);
-            applicationController.refreshPreview(optionsBuilder, editor.getText(), preview);
+            preview.loadContent(applicationController.refreshPreview(optionsBuilder, editor.getText()));
         }
 
     }
