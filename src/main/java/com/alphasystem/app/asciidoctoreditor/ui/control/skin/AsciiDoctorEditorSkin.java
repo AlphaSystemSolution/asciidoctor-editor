@@ -11,6 +11,7 @@ import javafx.scene.control.SkinBase;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 
+import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.fxmisc.richtext.StyleSpans;
 
@@ -122,7 +123,6 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
         @FXML
         void initialize() {
             AsciiDoctorEditorView view = getSkinnable();
-            view.previewFileProperty().addListener((o, ov, nv) -> preview.loadUrl(nv));
 
             editor.beingUpdatedProperty().addListener((observable, oldValue, newValue) -> {
                 if (!newValue) {
@@ -135,7 +135,6 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
             view.contentProperty().addListener((observable, oldValue, newValue) -> {
                 editor.replaceSelection(newValue);
             });
-            preview.loadUrl(view.getPreviewFile());
 
             sourceTab.selectedProperty().addListener((o, ov, nv) -> {
                 getSkinnable().setPreviewSelected(false);
@@ -148,7 +147,9 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
 
         private void refreshPreview() {
             getSkinnable().setPreviewSelected(true);
-            OptionsBuilder optionsBuilder = getSkinnable().getPropertyInfo().getOptionsBuilder();
+            final AttributesBuilder attributesBuilder = AttributesBuilder.attributes().linkCss(false);
+            OptionsBuilder optionsBuilder = getSkinnable().getPropertyInfo().getOptionsBuilder().headerFooter(true)
+                    .toFile(false).attributes(attributesBuilder);
             applicationController.refreshPreview(optionsBuilder, editor.getText(), preview);
         }
 

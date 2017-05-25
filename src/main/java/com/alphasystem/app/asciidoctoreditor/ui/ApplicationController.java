@@ -32,18 +32,14 @@ import com.alphasystem.asciidoc.model.Backend;
 import com.alphasystem.fx.ui.Browser;
 
 import static com.alphasystem.docbook.DocumentBuilder.buildDocument;
-import static com.alphasystem.util.AppUtil.getResourceAsStream;
 import static com.alphasystem.util.nio.NIOFileUtils.copyDir;
 import static com.alphasystem.util.nio.NIOFileUtils.fastCopy;
 import static java.lang.Character.isWhitespace;
 import static java.lang.String.format;
-import static java.nio.file.Files.copy;
-import static java.nio.file.Files.createTempFile;
 import static java.nio.file.Files.newInputStream;
 import static java.nio.file.Files.newOutputStream;
 import static java.nio.file.Files.write;
 import static java.nio.file.Paths.get;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.READ;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -244,23 +240,11 @@ public final class ApplicationController implements ApplicationConstants {
             StructuredDocument structuredDocument = asciidoctor.readDocumentStructure(docFile, new HashMap<>());
             propertyInfo.populateAttributes(structuredDocument.getHeader().getAttributes());
         }
-        createPreviewFile(propertyInfo, baseDir);
         return propertyInfo;
     }
 
     public void refreshPreview(OptionsBuilder optionsBuilder, String content, Browser browser) {
-        asciidoctor.convert(content, optionsBuilder);
-        browser.getWebEngine().reload();
-    }
-
-    private void createPreviewFile(AsciiDocumentInfo propertyInfo, File baseDir) throws IOException {
-        // now populate preview file name, if preview file does not exists copy it
-        try (InputStream inputStream = getResourceAsStream(format("templates.%s.html", DEFAULT_PREVIEW_FILE_NAME))) {
-            File previewFile = createTempFile(baseDir.toPath(), PREVIEW_FILE_PREFIX, PREVIEW_FILE_SUFFIX).toFile();
-            previewFile.deleteOnExit();
-            copy(inputStream, previewFile.toPath(), REPLACE_EXISTING);
-            propertyInfo.setPreviewFile(previewFile);
-        }
+        browser.loadContent(asciidoctor.convert(content, optionsBuilder));
     }
 
     private void copyResources(final AsciiDocumentInfo propertyInfo) throws IOException, URISyntaxException {
@@ -490,7 +474,6 @@ public final class ApplicationController implements ApplicationConstants {
             final File srcFile = documentInfo.getSrcFile();
             final String baseName = getBaseName(srcFile.getName());
             final String fileName = format("%s.%s", baseName, backend.getExtension());
-            documentInfo.setPreviewFile(new File(srcFile.getParentFile(), fileName));
             documentInfo.setBackend(backend.getValue());
             this.content = content;
         }

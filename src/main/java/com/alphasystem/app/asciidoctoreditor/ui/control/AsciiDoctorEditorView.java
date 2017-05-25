@@ -1,11 +1,7 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
-import java.io.File;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,7 +22,6 @@ public class AsciiDoctorEditorView extends Control {
 
     private final ObjectProperty<AsciiDocumentInfo> propertyInfo = new SimpleObjectProperty<>(null, "propertyInfo");
     private final StringProperty content = new SimpleStringProperty(null, "content");
-    private final ReadOnlyObjectWrapper<File> previewFile = new ReadOnlyObjectWrapper<>(null, "previewFile");
     private final BooleanProperty previewSelected = new SimpleBooleanProperty(false, "previewSelected");
     private final EditorState editorState = new EditorState();
 
@@ -35,11 +30,6 @@ public class AsciiDoctorEditorView extends Control {
 
         contentProperty().addListener((o, ov, nv) -> {
             setDisable(isBlank(nv));
-        });
-        propertyInfoProperty().addListener((o, ov, nv) -> {
-            File previewFile = nv.getPreviewFile();
-            setDisable(previewFile == null || !previewFile.exists());
-            this.previewFile.setValue(previewFile);
         });
         setContent("");
         setDisable(true);
@@ -68,14 +58,6 @@ public class AsciiDoctorEditorView extends Control {
 
     public final StringProperty contentProperty() {
         return content;
-    }
-
-    public File getPreviewFile() {
-        return previewFile.get();
-    }
-
-    public ReadOnlyObjectProperty<File> previewFileProperty() {
-        return previewFile.getReadOnlyProperty();
     }
 
     public final BooleanProperty previewSelectedProperty() {

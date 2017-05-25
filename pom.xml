@@ -45,7 +45,7 @@
     </dependencies>
     <properties>
         <maven.test.skip>true</maven.test.skip>
-        <docx-builder.version>${project.parent.version}</docx-builder.version>
+        <docx-builder.version>${project.version}</docx-builder.version>
         <fx-support.version>${project.parent.version}</fx-support.version>
         <mainClass>com.alphasystem.app.asciidoctoreditor.ui.AsciiDoctorEditorApp</mainClass>
     </properties>
