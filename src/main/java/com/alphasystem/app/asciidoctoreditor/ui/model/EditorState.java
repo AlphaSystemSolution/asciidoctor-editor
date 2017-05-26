@@ -2,6 +2,8 @@ package com.alphasystem.app.asciidoctoreditor.ui.model;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  * @author sali
@@ -14,6 +16,7 @@ public final class EditorState {
     private final BooleanProperty strikeThrough = new SimpleBooleanProperty(this, "strikeThrough");
     private final BooleanProperty subScript = new SimpleBooleanProperty(this, "subScript");
     private final BooleanProperty superScript = new SimpleBooleanProperty(this, "superScript");
+    private final StringProperty currentWord = new SimpleStringProperty(this, "currentWord");
 
     public boolean isBold() {
         return bold.get();
@@ -85,5 +88,17 @@ public final class EditorState {
 
     public void setSuperScript(boolean superScript) {
         this.superScript.set(superScript);
+    }
+
+    public final String getCurrentWord() {
+        return currentWord.get();
+    }
+
+    public final StringProperty currentWordProperty() {
+        return currentWord;
+    }
+
+    public final void setCurrentWord(String currentWord) {
+        this.currentWord.set(currentWord);
     }
 }

@@ -19,6 +19,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
 import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
+import com.alphasystem.app.asciidoctoreditor.ui.util.ApplicationHelper;
 import com.alphasystem.fx.ui.Browser;
 
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants.BOLD_KEY;
@@ -86,6 +87,7 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
         state.setStrikeThrough(strikeThrough);
         state.setSubScript(subScript);
         state.setSuperScript(superScript);
+        state.setCurrentWord(ApplicationHelper.getCurrentWord(editor));
     }
 
     private class SkinView extends BorderPane {
