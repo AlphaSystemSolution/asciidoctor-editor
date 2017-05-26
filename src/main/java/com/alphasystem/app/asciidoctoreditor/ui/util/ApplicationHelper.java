@@ -26,6 +26,15 @@ public final class ApplicationHelper {
         return selectedText.equals(currentWord);
     }
 
+    public static String getCurrentWord(AsciiDoctorTextArea editor) {
+        final IndexRange selection = editor.getSelection();
+        if (selection != null && selection.getLength() > 0) {
+            return getCurrentWord(editor, selection.getStart(), selection.getEnd());
+        } else {
+            return getCurrentWordNonSelection(editor, editor.getCurrentParagraph(), editor.getCaretColumn());
+        }
+    }
+
     /**
      * Scan the current selection to find its boundary.
      *
@@ -34,7 +43,7 @@ public final class ApplicationHelper {
      * @param end    selection end
      * @return return entire word which following selection belong
      */
-    public static String getCurrentWord(AsciiDoctorTextArea editor, int start, int end) {
+    private static String getCurrentWord(AsciiDoctorTextArea editor, int start, int end) {
         final StringBuilder builder = new StringBuilder();
 
         int from = start - 1;
@@ -77,12 +86,62 @@ public final class ApplicationHelper {
         return builder.toString();
     }
 
-    private static String getCurrentWord(AsciiDoctorTextArea editor) {
-        final IndexRange selection = editor.getSelection();
-        if (selection != null && selection.getLength() > 0) {
-            return getCurrentWord(editor, selection.getStart(), selection.getEnd());
+    private static String getCurrentWordNonSelection(AsciiDoctorTextArea editor, int paragraph, int column) {
+        final String text = editor.getText(paragraph);
+        if ((text == null) || (column >= text.length())) {
+            return null;
         }
-        return null;
+        final char ch = text.charAt(column);
+        if (isWhitespace(ch)) {
+            return null;
+        }
+
+        final StringBuilder builder = new StringBuilder();
+
+        int from = column - 1;
+        int to = column;
+        if (from >= 0) {
+            while (true) {
+                String subText = text.substring(from, to).trim();
+                if (subText.isEmpty()) {
+                    break;
+                }
+                final char c = subText.charAt(0);
+                if (isWhitespace(c)) {
+                    break;
+                }
+                builder.insert(0, c);
+                to = from;
+                from -= 1;
+                if(from < 0){
+                    break;
+                }
+            }
+        }
+
+        from = column;
+        to = column + 1;
+        if (to < text.length()) {
+            while (true) {
+                String subText = text.substring(from, to).trim();
+                if (subText.isEmpty()) {
+                    break;
+                }
+                final char c = subText.charAt(0);
+                if (isWhitespace(c)) {
+                    break;
+                }
+                builder.append(c);
+                from = to;
+                to += 1;
+                if (to > text.length()) {
+                    break;
+                }
+            }
+        }
+
+        System.out.println(builder);
+        return builder.toString();
     }
 
     /**
