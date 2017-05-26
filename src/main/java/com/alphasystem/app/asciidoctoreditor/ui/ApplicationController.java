@@ -87,10 +87,6 @@ public final class ApplicationController implements ApplicationConstants {
         return getValue(format("%s.markupEnd", key), "");
     }
 
-    private static String getStyleName(String key) {
-        return getValue(format("%s.styleName", key));
-    }
-
     private static String formatText(String source, String markupBegin, String markupEnd) {
         return format("%s%s%s", markupBegin, source, markupEnd);
     }
@@ -161,20 +157,20 @@ public final class ApplicationController implements ApplicationConstants {
         String markupBegin = boundaryWord ? getMarkupBegin(markupBeginBoundaryKey) : getMarkupBegin(markupBeginNonBoundaryKey);
         String markupEnd = boundaryWord ? getMarkupEnd(markupBeginBoundaryKey) : getMarkupEnd(markupBeginNonBoundaryKey);
         int offset = boundaryWord ? 1 : 2;
-        final String styleName = bold ? getStyleName(BOLD_KEY) : getStyleName(ITALIC_KEY);
+        final String styleName = bold ? BOLD_KEY : ITALIC_KEY;
         applyMarkup(editor, styleName, markupBegin, markupEnd, offset);
     }
 
     public void doUnderline(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, getStyleName(UNDERLINE_KEY), getMarkupBegin(UNDERLINE_KEY), getMarkupEnd(UNDERLINE_KEY), 1);
+        applyMarkup(editor, UNDERLINE_KEY, getMarkupBegin(UNDERLINE_KEY), getMarkupEnd(UNDERLINE_KEY), 1);
     }
 
     public void doStrikeThrough(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, getStyleName(STRIKETHROUGH_KEY), getMarkupBegin(STRIKETHROUGH_KEY), getMarkupEnd(STRIKETHROUGH_KEY), 1);
+        applyMarkup(editor, STRIKETHROUGH_KEY, getMarkupBegin(STRIKETHROUGH_KEY), getMarkupEnd(STRIKETHROUGH_KEY), 1);
     }
 
     public void doSubscript(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, getStyleName(SUBSCRIPT_KEY), getMarkupBegin(SUBSCRIPT_KEY), getMarkupEnd(SUBSCRIPT_KEY), 0);
+        applyMarkup(editor, getMarkupBegin(SUBSCRIPT_KEY), getMarkupEnd(SUPERSCRIPT_KEY), 0);
     }
 
     public void doSuperscript(final AsciiDoctorTextArea editor) {
