@@ -166,11 +166,11 @@ public final class ApplicationController implements ApplicationConstants {
     }
 
     public void doUnderline(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, getStyleName(UNDERLINE_KEY), getMarkupBegin(UNDERLINE_KEY), getMarkupEnd(UNDERLINE_KEY), 0);
+        applyMarkup(editor, getStyleName(UNDERLINE_KEY), getMarkupBegin(UNDERLINE_KEY), getMarkupEnd(UNDERLINE_KEY), 1);
     }
 
     public void doStrikeThrough(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, getStyleName(STRIKETHROUGH_KEY), getMarkupBegin(STRIKETHROUGH_KEY), getMarkupEnd(STRIKETHROUGH_KEY), 0);
+        applyMarkup(editor, getStyleName(STRIKETHROUGH_KEY), getMarkupBegin(STRIKETHROUGH_KEY), getMarkupEnd(STRIKETHROUGH_KEY), 1);
     }
 
     public void doSubscript(final AsciiDoctorTextArea editor) {
@@ -375,7 +375,7 @@ public final class ApplicationController implements ApplicationConstants {
 
         if (hasSelection) {
             // re-select the text
-            editor.selectRange(start, editor.getCaretPosition() - 1);
+            editor.selectRange(start, editor.getCaretPosition() - offset);
         }
     }
 
