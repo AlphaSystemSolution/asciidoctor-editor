@@ -27,13 +27,13 @@ import org.slf4j.LoggerFactory;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
+import com.alphasystem.app.asciidoctoreditor.ui.util.ApplicationHelper;
 import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import com.alphasystem.asciidoc.model.Backend;
 
 import static com.alphasystem.docbook.DocumentBuilder.buildDocument;
 import static com.alphasystem.util.nio.NIOFileUtils.copyDir;
 import static com.alphasystem.util.nio.NIOFileUtils.fastCopy;
-import static java.lang.Character.isWhitespace;
 import static java.lang.String.format;
 import static java.nio.file.Files.newInputStream;
 import static java.nio.file.Files.newOutputStream;
@@ -157,7 +157,7 @@ public final class ApplicationController implements ApplicationConstants {
     private void doBoldOrItalic(AsciiDoctorTextArea editor, boolean bold) {
         String markupBeginBoundaryKey = bold ? BOLD_BOUNDARY_KEY : ITALIC_BOUNDARY_KEY;
         String markupBeginNonBoundaryKey = bold ? BOLD_NON_BOUNDARY_KEY : ITALIC_NON_BOUNDARY_KEY;
-        boolean boundaryWord = isBoundaryWord(editor);
+        boolean boundaryWord = ApplicationHelper.isEntireWordSelected(editor);
         String markupBegin = boundaryWord ? getMarkupBegin(markupBeginBoundaryKey) : getMarkupBegin(markupBeginNonBoundaryKey);
         String markupEnd = boundaryWord ? getMarkupEnd(markupBeginBoundaryKey) : getMarkupEnd(markupBeginNonBoundaryKey);
         int offset = boundaryWord ? 1 : 2;
@@ -308,24 +308,6 @@ public final class ApplicationController implements ApplicationConstants {
         lines.add("");
         lines.add("");
         write(propertyInfo.getSrcFile().toPath(), lines, CREATE, WRITE);
-    }
-
-    private boolean isBoundaryWord(AsciiDoctorTextArea editor) {
-        IndexRange selection = editor.getSelection();
-        boolean boundaryWord = true;
-        try {
-            final int selectionStart = selection.getStart();
-            String text = editor.getText(selectionStart - 1, selectionStart);
-            boundaryWord = isWhitespace(text.charAt(0));
-            if (boundaryWord) {
-                final int selectionEnd = selection.getEnd();
-                text = editor.getText(selectionEnd, selectionEnd + 1);
-                boundaryWord = isWhitespace(text.charAt(0));
-            }
-        } catch (Exception ex) {
-            // ignore
-        }
-        return boundaryWord;
     }
 
     private void applyMarkup(AsciiDoctorTextArea editor, String markupBegin, String markupEnd, int offset) {
