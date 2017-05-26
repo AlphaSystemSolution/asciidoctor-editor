@@ -12,7 +12,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
  */
 public final class ApplicationHelper {
 
-    private static final Pattern PATTERN = Pattern.compile("[.!?\\-,]");
+    private static final Pattern PUNCTUATION_PATTERN = Pattern.compile("[.,]");
 
     /**
      * Do not let anyone instantiate this class.
@@ -140,7 +140,6 @@ public final class ApplicationHelper {
             }
         }
 
-        System.out.println(builder);
         return builder.toString();
     }
 
@@ -153,7 +152,7 @@ public final class ApplicationHelper {
      * @see Character#isWhitespace(char)
      */
     private static boolean isWhitespace(char ch) {
-        Matcher matcher = PATTERN.matcher(String.valueOf(ch));
+        Matcher matcher = PUNCTUATION_PATTERN.matcher(String.valueOf(ch));
         return matcher.find() || Character.isWhitespace(ch);
     }
 }
