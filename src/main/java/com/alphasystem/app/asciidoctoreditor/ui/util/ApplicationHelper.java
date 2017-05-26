@@ -46,9 +46,8 @@ public final class ApplicationHelper {
                 if (text == null || text.isEmpty()) {
                     break;
                 }
-                Matcher matcher = PATTERN.matcher(text);
                 final char c = text.charAt(0);
-                if (matcher.find() || Character.isWhitespace(c)) {
+                if (isWhitespace(c)) {
                     break;
                 }
                 builder.insert(0, c);
@@ -66,9 +65,8 @@ public final class ApplicationHelper {
             if (text == null || text.isEmpty()) {
                 break;
             }
-            Matcher matcher = PATTERN.matcher(text);
             final char c = text.charAt(0);
-            if (matcher.find() || Character.isWhitespace(c)) {
+            if (isWhitespace(c)) {
                 break;
             }
             builder.append(c);
@@ -85,5 +83,18 @@ public final class ApplicationHelper {
             return getCurrentWord(editor, selection.getStart(), selection.getEnd());
         }
         return null;
+    }
+
+    /**
+     * Test whether the ch{@code ch} is either a whitespace character or one of punctuation.
+     *
+     * @param ch the character to be tested.
+     * @return {@code true} if the character is a Java whitespace or one of punctuation
+     * character; {@code false} otherwise.
+     * @see Character#isWhitespace(char)
+     */
+    private static boolean isWhitespace(char ch) {
+        Matcher matcher = PATTERN.matcher(String.valueOf(ch));
+        return matcher.find() || Character.isWhitespace(ch);
     }
 }
