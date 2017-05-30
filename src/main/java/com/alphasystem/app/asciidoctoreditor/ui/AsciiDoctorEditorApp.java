@@ -17,7 +17,7 @@ import com.alphasystem.bootfx.starter.application.AbstractJavaFxApplicationSuppo
 @SpringBootApplication
 public class AsciiDoctorEditorApp extends AbstractJavaFxApplicationSupport {
 
-    @Value("${app.ui.title}") private String windowTitle;
+    private String windowTitle;
 
     public static void main(String[] args) {
         launchApp(AsciiDoctorEditorApp.class, args);
@@ -40,5 +40,10 @@ public class AsciiDoctorEditorApp extends AbstractJavaFxApplicationSupport {
         primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    @Value("${app.ui.title}")
+    public void setWindowTitle(String windowTitle) {
+        this.windowTitle = windowTitle;
     }
 }
