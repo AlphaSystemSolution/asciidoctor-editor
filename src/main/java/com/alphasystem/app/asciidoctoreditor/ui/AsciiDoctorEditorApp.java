@@ -1,24 +1,31 @@
 package com.alphasystem.app.asciidoctoreditor.ui;
 
-import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditor;
-import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditor;
+import com.alphasystem.bootfx.starter.application.AbstractJavaFxApplicationSupport;
+
 /**
  * @author sali
  */
-public class AsciiDoctorEditorApp extends Application {
+@SpringBootApplication
+public class AsciiDoctorEditorApp extends AbstractJavaFxApplicationSupport {
+
+    @Value("${app.ui.title}") private String windowTitle;
 
     public static void main(String[] args) {
-        launch(args);
+        launchApp(AsciiDoctorEditorApp.class, args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Ascii Doctor Editor");
+        primaryStage.setTitle(windowTitle);
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
 

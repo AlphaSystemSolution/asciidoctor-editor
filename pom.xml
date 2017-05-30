@@ -2,9 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.alphasystem.project</groupId>
-        <artifactId>jar</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.3.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.alphasystem.app</groupId>
     <artifactId>asciidoctor-editor</artifactId>
@@ -12,16 +13,17 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
     <dependencies>
+        <dependency>
+            <groupId>com.alphasystem.spring-javafx.boot</groupId>
+            <artifactId>springboot-javafx-starter</artifactId>
+            <version>${springboot-javafx-starter.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.alphasystem.ui</groupId>
             <artifactId>fx-support</artifactId>
@@ -44,9 +46,12 @@
         </dependency>
     </dependencies>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
         <maven.test.skip>true</maven.test.skip>
         <docx-builder.version>${project.version}</docx-builder.version>
-        <fx-support.version>${project.parent.version}</fx-support.version>
-        <mainClass>com.alphasystem.app.asciidoctoreditor.ui.AsciiDoctorEditorApp</mainClass>
+        <springboot-javafx-starter.version>${project.version}</springboot-javafx-starter.version>
+        <fx-support.version>3.0.0-SNAPSHOT</fx-support.version>
     </properties>
 </project>
