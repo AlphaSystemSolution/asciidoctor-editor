@@ -45,6 +45,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
 import com.alphasystem.arabic.ui.keyboard.ArabicKeyboard;
 import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import com.alphasystem.asciidoc.model.Backend;
+import com.alphasystem.spring.support.ApplicationContextProvider;
 
 import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.NEW;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.OPEN;
@@ -67,7 +68,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class AsciiDoctorEditorController implements ApplicationConstants {
 
     private final FileChooser fileChooser = new FileChooser();
-    private final ApplicationController applicationController = ApplicationController.getInstance();
+    private final ApplicationController applicationController = ApplicationContextProvider.getBean(ApplicationController.class);
     private final NewDocumentDialog newDocumentDialog = new NewDocumentDialog();
     private final Popup keyboardPopup = new Popup();
     private final ArabicKeyboard keyboardView;

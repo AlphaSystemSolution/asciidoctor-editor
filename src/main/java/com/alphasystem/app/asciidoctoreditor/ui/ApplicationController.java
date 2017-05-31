@@ -23,6 +23,7 @@ import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.ast.StructuredDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
@@ -49,17 +50,13 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 /**
  * @author sali
  */
+@Component
 public final class ApplicationController implements ApplicationConstants {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("AsciiDoctorEditor");
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
     private static final String MARKUP_STYLE_NAME = "markup";
     private static final String PLACE_HOLDER_TEXT = "place holder";
-    private static ApplicationController instance = new ApplicationController();
-
-    public static ApplicationController getInstance() {
-        return instance;
-    }
 
     public static String getValue(String key, String defaultValue) {
         String value = null;
@@ -89,9 +86,6 @@ public final class ApplicationController implements ApplicationConstants {
     }
 
     private final Asciidoctor asciidoctor = Asciidoctor.Factory.create();
-
-    private ApplicationController() {
-    }
 
     public void doNewDocAction(final AsciiDocumentInfo propertyInfo, boolean skipCopyResources,
                                EventHandler<WorkerStateEvent> onFailed,

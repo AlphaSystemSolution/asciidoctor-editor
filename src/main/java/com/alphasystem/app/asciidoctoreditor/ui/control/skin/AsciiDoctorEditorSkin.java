@@ -21,6 +21,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
 import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
 import com.alphasystem.app.asciidoctoreditor.ui.util.ApplicationHelper;
 import com.alphasystem.fx.ui.Browser;
+import com.alphasystem.spring.support.ApplicationContextProvider;
 
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants.BOLD_KEY;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants.ITALIC_KEY;
@@ -92,7 +93,7 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
 
     private class SkinView extends BorderPane {
 
-        private ApplicationController applicationController = ApplicationController.getInstance();
+        private ApplicationController applicationController = ApplicationContextProvider.getBean(ApplicationController.class);
 
         @FXML
         private Tab sourceTab;
