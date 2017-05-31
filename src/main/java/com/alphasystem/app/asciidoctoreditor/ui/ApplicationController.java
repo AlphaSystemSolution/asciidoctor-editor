@@ -52,9 +52,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public final class ApplicationController implements ApplicationConstants {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("AsciiDoctorEditor");
-    private static final String DEFAULT_PREVIEW_FILE_NAME = "preview";
-    private static final String PREVIEW_FILE_PREFIX = format("_____%s_____", DEFAULT_PREVIEW_FILE_NAME);
-    private static final String PREVIEW_FILE_SUFFIX = "_____.html";
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
     private static final String MARKUP_STYLE_NAME = "markup";
     private static final String PLACE_HOLDER_TEXT = "place holder";
