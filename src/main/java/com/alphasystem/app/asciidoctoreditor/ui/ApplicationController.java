@@ -58,7 +58,7 @@ public final class ApplicationController implements ApplicationConstants {
     private static final String MARKUP_STYLE_NAME = "markup";
     private static final String PLACE_HOLDER_TEXT = "place holder";
 
-    public static String getValue(String key, String defaultValue) {
+    private static String getValue(String key, String defaultValue) {
         String value = null;
         try {
             value = RESOURCE_BUNDLE.getString(key);
@@ -69,7 +69,7 @@ public final class ApplicationController implements ApplicationConstants {
         return value;
     }
 
-    public static String getValue(String key) {
+    private static String getValue(String key) {
         return getValue(key, null);
     }
 
