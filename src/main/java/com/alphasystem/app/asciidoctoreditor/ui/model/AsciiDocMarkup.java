@@ -87,7 +87,7 @@ public final class AsciiDocMarkup {
                 .toString();
     }
 
-    private static class Markup {
+    public static class Markup {
         private String markupBegin;
         private String markupEnd;
 
