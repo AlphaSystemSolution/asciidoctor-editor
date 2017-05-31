@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
 
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditor;
 import com.alphasystem.bootfx.starter.application.AbstractJavaFxApplicationSupport;
@@ -15,6 +16,7 @@ import com.alphasystem.bootfx.starter.application.AbstractJavaFxApplicationSuppo
  * @author sali
  */
 @SpringBootApplication
+@Import({AsciiDoctorEditorConfiguration.class})
 public class AsciiDoctorEditorApp extends AbstractJavaFxApplicationSupport {
 
     private String windowTitle;
@@ -39,6 +41,7 @@ public class AsciiDoctorEditorApp extends AbstractJavaFxApplicationSupport {
         scene.getStylesheets().addAll("/styles/glyphs_custom.css");
         primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
+        hidePreloader();
         primaryStage.show();
     }
 
