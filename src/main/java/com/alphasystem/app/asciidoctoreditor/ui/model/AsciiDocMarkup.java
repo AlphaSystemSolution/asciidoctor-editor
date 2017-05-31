@@ -74,19 +74,6 @@ public final class AsciiDocMarkup {
         this.underline = underline;
     }
 
-    @Override
-    public String toString() {
-        return new StringBuilder("Markups").append(System.lineSeparator())
-                .append(getHeader()).append(System.lineSeparator())
-                .append(getLink()).append(System.lineSeparator())
-                .append(getSourceCode()).append(System.lineSeparator())
-                .append(getStrikeThrough()).append(System.lineSeparator())
-                .append(getSubscript()).append(System.lineSeparator())
-                .append(getSuperscript()).append(System.lineSeparator())
-                .append(getUnderline()).append(System.lineSeparator())
-                .toString();
-    }
-
     public static class Markup {
         private String markupBegin;
         private String markupEnd;
