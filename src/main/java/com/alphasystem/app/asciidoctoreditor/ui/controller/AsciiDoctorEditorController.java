@@ -284,10 +284,12 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     void initialize() {
         tabPane.getSelectionModel().selectedItemProperty().addListener((o, ov, nv) -> {
             if (nv == null) {
+                applicationController.setCurrentEditorState(null);
                 active.set(false);
             } else {
                 currentEditorView = (AsciiDoctorEditorView) nv.getContent();
                 currentEditor = currentEditorView.getEditor();
+                applicationController.setCurrentEditorState(currentEditorView.getEditorState());
                 active.set(currentEditor != null);
                 currentEditorView.previewSelectedProperty().addListener((o1, ov1, nv2) -> active.set(!nv2));
             }

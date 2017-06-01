@@ -31,6 +31,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
 import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocMarkup;
 import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocMarkup.Markup;
+import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
 import com.alphasystem.app.asciidoctoreditor.ui.util.ApplicationHelper;
 import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import com.alphasystem.asciidoc.model.Backend;
@@ -61,6 +62,7 @@ public final class ApplicationController implements ApplicationConstants {
     private static final String MARKUP_STYLE_NAME = "markup";
     private static final String PLACE_HOLDER_TEXT = "place holder";
     private final Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+    private EditorState currentEditorState;
     @Autowired private AsciiDocMarkup asciiDocMarkup;
 
     private static String getValue(String key, String defaultValue) {
@@ -88,6 +90,10 @@ public final class ApplicationController implements ApplicationConstants {
 
     private static String formatText(String source, String markupBegin, String markupEnd) {
         return format("%s%s%s", markupBegin, source, markupEnd);
+    }
+
+    public void setCurrentEditorState(EditorState currentEditorState) {
+        this.currentEditorState = currentEditorState;
     }
 
     public void doNewDocAction(final AsciiDocumentInfo propertyInfo, boolean skipCopyResources,
