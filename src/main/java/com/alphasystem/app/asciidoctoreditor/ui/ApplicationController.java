@@ -23,11 +23,14 @@ import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.ast.StructuredDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
 import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
+import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocMarkup;
+import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocMarkup.Markup;
 import com.alphasystem.app.asciidoctoreditor.ui.util.ApplicationHelper;
 import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import com.alphasystem.asciidoc.model.Backend;
@@ -57,6 +60,8 @@ public final class ApplicationController implements ApplicationConstants {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
     private static final String MARKUP_STYLE_NAME = "markup";
     private static final String PLACE_HOLDER_TEXT = "place holder";
+    private final Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+    @Autowired private AsciiDocMarkup asciiDocMarkup;
 
     private static String getValue(String key, String defaultValue) {
         String value = null;
@@ -84,8 +89,6 @@ public final class ApplicationController implements ApplicationConstants {
     private static String formatText(String source, String markupBegin, String markupEnd) {
         return format("%s%s%s", markupBegin, source, markupEnd);
     }
-
-    private final Asciidoctor asciidoctor = Asciidoctor.Factory.create();
 
     public void doNewDocAction(final AsciiDocumentInfo propertyInfo, boolean skipCopyResources,
                                EventHandler<WorkerStateEvent> onFailed,
@@ -153,11 +156,13 @@ public final class ApplicationController implements ApplicationConstants {
     }
 
     public void doUnderline(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, UNDERLINE_KEY, getMarkupBegin(UNDERLINE_KEY), getMarkupEnd(UNDERLINE_KEY), 1);
+        final Markup underline = asciiDocMarkup.getUnderline();
+        applyMarkup(editor, UNDERLINE_KEY, underline.getMarkupBegin(), underline.getMarkupEnd(), 1);
     }
 
     public void doStrikeThrough(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, STRIKETHROUGH_KEY, getMarkupBegin(STRIKETHROUGH_KEY), getMarkupEnd(STRIKETHROUGH_KEY), 1);
+        final Markup strikeThrough = asciiDocMarkup.getStrikeThrough();
+        applyMarkup(editor, STRIKETHROUGH_KEY, strikeThrough.getMarkupBegin(), strikeThrough.getMarkupEnd(), 1);
     }
 
     public void doSubscript(final AsciiDoctorTextArea editor) {
