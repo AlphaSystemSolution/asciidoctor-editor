@@ -5,7 +5,12 @@ import java.util.regex.Pattern;
 
 import javafx.scene.control.IndexRange;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
+import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocMarkup;
+import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
+import com.alphasystem.spring.support.ApplicationContextProvider;
 
 /**
  * @author sali
@@ -13,6 +18,9 @@ import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
 public final class ApplicationHelper {
 
     private static final Pattern PUNCTUATION_PATTERN = Pattern.compile("[.,]");
+    private static final String REPLACEMENT = "";
+
+    private static AsciiDocMarkup asciiDocMarkup;
 
     /**
      * Do not let anyone instantiate this class.
@@ -20,19 +28,39 @@ public final class ApplicationHelper {
     private ApplicationHelper() {
     }
 
-    public static boolean isEntireWordSelected(AsciiDoctorTextArea editor) {
-        final String currentWord = getCurrentWord(editor);
+    public static boolean isEntireWordSelected(AsciiDoctorTextArea editor, EditorState editorState) {
+        final String currentWord = getCurrentWord(editor, editorState);
         final String selectedText = editor.getSelectedText();
         return selectedText.equals(currentWord);
     }
 
-    public static String getCurrentWord(AsciiDoctorTextArea editor) {
+    public static String getCurrentWordAndMarkup(AsciiDoctorTextArea editor) {
         final IndexRange selection = editor.getSelection();
         if (selection != null && selection.getLength() > 0) {
             return getCurrentWord(editor, selection.getStart(), selection.getEnd());
         } else {
             return getCurrentWordNonSelection(editor, editor.getCurrentParagraph(), editor.getCaretColumn());
         }
+    }
+
+    public static String getCurrentWord(AsciiDoctorTextArea editor, EditorState editorState) {
+        String currentWord = getCurrentWordAndMarkup(editor);
+        if (editorState != null && !StringUtils.isEmpty(currentWord)) {
+            if (editorState.isBold()) {
+                currentWord = removeMarkup(currentWord, getAsciiDocMarkup().getBold());
+            }
+            if (editorState.isItalic()) {
+                currentWord = removeMarkup(currentWord, getAsciiDocMarkup().getItalic());
+            }
+            if (editorState.isUnderline()) {
+                currentWord = removeMarkup(currentWord, getAsciiDocMarkup().getUnderline());
+            }
+        }
+        return currentWord;
+    }
+
+    private static String removeMarkup(String selection, AsciiDocMarkup.Markup markup) {
+        return selection.replace(markup.getMarkupBegin(), REPLACEMENT).replace(markup.getMarkupEnd(), REPLACEMENT);
     }
 
     /**
@@ -113,7 +141,7 @@ public final class ApplicationHelper {
                 builder.insert(0, c);
                 to = from;
                 from -= 1;
-                if(from < 0){
+                if (from < 0) {
                     break;
                 }
             }
@@ -155,4 +183,12 @@ public final class ApplicationHelper {
         Matcher matcher = PUNCTUATION_PATTERN.matcher(String.valueOf(ch));
         return matcher.find() || Character.isWhitespace(ch);
     }
+
+    private static AsciiDocMarkup getAsciiDocMarkup() {
+        if (asciiDocMarkup == null) {
+            asciiDocMarkup = ApplicationContextProvider.getBean(AsciiDocMarkup.class);
+        }
+        return asciiDocMarkup;
+    }
+
 }
