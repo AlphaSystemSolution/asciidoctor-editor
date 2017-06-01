@@ -151,7 +151,7 @@ public final class ApplicationController implements ApplicationConstants {
     }
 
     private void doBoldOrItalic(AsciiDoctorTextArea editor, boolean bold) {
-        boolean boundaryWord = ApplicationHelper.isEntireWordSelected(editor);
+        boolean boundaryWord = ApplicationHelper.isEntireWordSelected(editor, currentEditorState);
 
         Markup markup;
         if (bold) {
