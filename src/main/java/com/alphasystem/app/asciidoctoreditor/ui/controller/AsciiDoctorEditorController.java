@@ -368,6 +368,9 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
 
     // actions
 
+    /**
+     * Binds to open tool bar button and menu item.
+     */
     @FXML
     public void newDocumentAction() {
         final Optional<AsciiDocumentInfo> result = newDocumentDialog.showAndWait();
@@ -396,10 +399,86 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         fireUpdateAction(OPEN);
     }
 
+    /**
+     * Delegates call to {@link ApplicationController#doOpenAction(File, EventHandler, EventHandler)} to open
+     * document. Upon successful return an editor will be opened with the content of current file.
+     *
+     * @param file file to open
+     * @see ApplicationController#doOpenAction(File, EventHandler, EventHandler)
+     * @see #openDocument(File, String)
+     */
+    private void openAction(final File file) {
+        EventHandler<WorkerStateEvent> onFailed = event -> defaultCursor(view);
+        EventHandler<WorkerStateEvent> onSucceeded = event -> {
+            try {
+                openDocument(file, (String) event.getSource().getValue());
+            } catch (IOException e) {
+                throw new UncheckedIOException(e.getMessage(), e);
+            } finally {
+                defaultCursor(view);
+            }
+        };
+        applicationController.doOpenAction(file, onFailed, onSucceeded);
+    }
+
+    /**
+     * Opens a document editor. This method will be called from the <code>onSucceeded</code> call back of method
+     * {@link #openAction(File)}.
+     *
+     * @param file    file to open, if null then creates a dummy file to open a new document
+     * @param content content of the document
+     * @throws FileNotFoundException if File to open is not found
+     * @see #openAction(File)
+     */
+    private void openDocument(File file, String content) throws IOException {
+        if (file == null || !file.exists()) {
+            String path = file == null ? "Not provided" : file.getPath();
+            throw new FileNotFoundException(format("File {%s} does not exists.", path));
+        }
+        addTab(applicationController.openDocument(file, content));
+    }
+
+    /**
+     * Binds to save tool bar button and menu item.
+     */
     @FXML
     public void saveAction() {
         saveAction(false);
         fireUpdateAction(SAVE);
+    }
+
+    /**
+     * Saves current file. If flag <code>saveAs</code> is true or current base dir is null then file dialog will be
+     * displayed to choose file.
+     *
+     * @param saveAs if <i>true</i> then file will be saved as different file (dialog will be displayed to choose new file,
+     *               otherwise save current file.
+     * @see ApplicationController#doSaveAction(File, String, EventHandler, EventHandler)
+     */
+    private void saveAction(boolean saveAs) {
+        if (currentEditorView != null) {
+            File destFile = currentEditorView.getPropertyInfo().getSrcFile();
+            File baseDir = destFile.getParentFile();
+            boolean showFileDialog = saveAs || baseDir == null;
+            if (showFileDialog) {
+                destFile = fileChooser.showSaveDialog(view.getScene().getWindow());
+                if (destFile == null) {
+                    // user might have cancel the dialog
+                    return;
+                }
+            } // end of if "showFileDialog"
+            EventHandler<WorkerStateEvent> onFailed = this::handleOnFailed;
+            EventHandler<WorkerStateEvent> onSucceeded = event -> saveDocument();
+            applicationController.doSaveAction(destFile, currentEditor.getText(), onFailed, onSucceeded);
+        }
+    }
+
+    /**
+     * Callback method of <code>onSucceeded</code> of {@link ApplicationController#doSaveAction(File, String, EventHandler, EventHandler)}.
+     * This is dummy method does nothing since file must have been saved already.
+     */
+    private void saveDocument() {
+        // do nothing file should have been saved already
     }
 
     @FXML
@@ -546,65 +625,6 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     }
 
     // action helpers
-
-    /**
-     * Delegates call to {@link ApplicationController#doOpenAction(File, EventHandler, EventHandler)} to open
-     * document. Upon successful return an editor will be opened with the content of current file.
-     *
-     * @param file file to open
-     * @see ApplicationController#doOpenAction(File, EventHandler, EventHandler)
-     * @see #openDocument(File, String)
-     */
-    private void openAction(final File file) {
-        EventHandler<WorkerStateEvent> onFailed = event -> defaultCursor(view);
-        EventHandler<WorkerStateEvent> onSucceeded = event -> {
-            try {
-                openDocument(file, (String) event.getSource().getValue());
-            } catch (IOException e) {
-                throw new UncheckedIOException(e.getMessage(), e);
-            } finally {
-                defaultCursor(view);
-            }
-        };
-        applicationController.doOpenAction(file, onFailed, onSucceeded);
-    }
-
-    /**
-     * Opens a document editor.
-     *
-     * @param file    file to open, if null then creates a dummy file to open a new document
-     * @param content content of the document
-     * @throws FileNotFoundException
-     */
-    private void openDocument(File file, String content) throws IOException {
-        if (file == null || !file.exists()) {
-            String path = file == null ? "Not provided" : file.getPath();
-            throw new FileNotFoundException(format("File {%s} does not exists.", path));
-        }
-        addTab(applicationController.openDocument(file, content));
-    }
-
-    private void saveAction(boolean saveAs) {
-        if (currentEditorView != null) {
-            File destFile = currentEditorView.getPropertyInfo().getSrcFile();
-            File baseDir = destFile.getParentFile();
-            boolean showFileDialog = saveAs || baseDir == null;
-            if (showFileDialog) {
-                destFile = fileChooser.showSaveDialog(view.getScene().getWindow());
-                if (destFile == null) {
-                    // user might have cancel the dialog
-                    return;
-                }
-            } // end of if "showFileDialog"
-            EventHandler<WorkerStateEvent> onFailed = this::handleOnFailed;
-            EventHandler<WorkerStateEvent> onSucceeded = event -> saveDocument();
-            applicationController.doSaveAction(destFile, currentEditor.getText(), onFailed, onSucceeded);
-        }
-    }
-
-    private void saveDocument() {
-        // do nothing file should have been saved already
-    }
 
     private void addTab(AsciiDoctorEditorView editorView) {
         updateToolBar(editorView);
