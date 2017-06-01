@@ -145,14 +145,18 @@ public final class ApplicationController implements ApplicationConstants {
     }
 
     private void doBoldOrItalic(AsciiDoctorTextArea editor, boolean bold) {
-        String markupBeginBoundaryKey = bold ? BOLD_BOUNDARY_KEY : ITALIC_BOUNDARY_KEY;
-        String markupBeginNonBoundaryKey = bold ? BOLD_NON_BOUNDARY_KEY : ITALIC_NON_BOUNDARY_KEY;
         boolean boundaryWord = ApplicationHelper.isEntireWordSelected(editor);
-        String markupBegin = boundaryWord ? getMarkupBegin(markupBeginBoundaryKey) : getMarkupBegin(markupBeginNonBoundaryKey);
-        String markupEnd = boundaryWord ? getMarkupEnd(markupBeginBoundaryKey) : getMarkupEnd(markupBeginNonBoundaryKey);
+
+        Markup markup;
+        if (bold) {
+            markup = boundaryWord ? asciiDocMarkup.getBold() : asciiDocMarkup.getBoldPartial();
+        } else {
+            markup = boundaryWord ? asciiDocMarkup.getItalic() : asciiDocMarkup.getItalicPartial();
+        }
+
         int offset = boundaryWord ? 1 : 2;
         final String styleName = bold ? BOLD_KEY : ITALIC_KEY;
-        applyMarkup(editor, styleName, markupBegin, markupEnd, offset);
+        applyMarkup(editor, styleName, markup.getMarkupBegin(), markup.getMarkupEnd(), offset);
     }
 
     public void doUnderline(final AsciiDoctorTextArea editor) {
