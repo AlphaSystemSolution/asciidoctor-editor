@@ -80,227 +80,153 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     private AsciiDoctorTextArea currentEditor;
     private int startCaretPosition = -1;
 
-    @FXML
-    private TabPane tabPane;
+    @FXML private TabPane tabPane;
 
-    @FXML
-    private MenuBar menuBar;
+    @FXML private MenuBar menuBar;
 
-    @FXML
-    private ToolBar toolBar;
+    @FXML private ToolBar toolBar;
 
-    @FXML
-    private MenuItem newDocumentMenuItem;
+    @FXML private MenuItem newDocumentMenuItem;
 
-    @FXML
-    private Button newDocumentButton;
+    @FXML private Button newDocumentButton;
 
-    @FXML
-    private MenuItem openDocumentMenuItem;
+    @FXML private MenuItem openDocumentMenuItem;
 
-    @FXML
-    private Button openDocumentButton;
+    @FXML private Button openDocumentButton;
 
-    @FXML
-    private MenuItem saveDocumentMenuItem;
+    @FXML private MenuItem saveDocumentMenuItem;
 
-    @FXML
-    private Button saveDocumentButton;
+    @FXML private Button saveDocumentButton;
 
-    @FXML
-    private Menu exportMenu;
+    @FXML private Menu exportMenu;
 
-    @FXML
-    private MenuButton exportButton;
+    @FXML private MenuButton exportButton;
 
-    @FXML
-    private MenuItem exportToHtmlMenuItem;
+    @FXML private MenuItem exportToHtmlMenuItem;
 
-    @FXML
-    private MenuItem exportToHtmlButton;
+    @FXML private MenuItem exportToHtmlButton;
 
-    @FXML
-    private MenuItem exportToDocBookMenuItem;
+    @FXML private MenuItem exportToDocBookMenuItem;
 
-    @FXML
-    private MenuItem exportToDocBookButton;
+    @FXML private MenuItem exportToDocBookButton;
 
-    @FXML
-    private MenuItem exportToWordMenuItem;
+    @FXML private MenuItem exportToWordMenuItem;
 
-    @FXML
-    private MenuItem exportToWordButton;
+    @FXML private MenuItem exportToWordButton;
 
-    @FXML
-    private MenuItem exitMenuItem;
+    @FXML private MenuItem exitMenuItem;
 
-    @FXML
-    private MenuItem undoMenuItem;
+    @FXML private MenuItem undoMenuItem;
 
-    @FXML
-    private Button undoButton;
+    @FXML private Button undoButton;
 
-    @FXML
-    private MenuItem redoMenuItem;
+    @FXML private MenuItem redoMenuItem;
 
-    @FXML
-    private Button redoButton;
+    @FXML private Button redoButton;
 
-    @FXML
-    private MenuItem cutMenuItem;
+    @FXML private MenuItem cutMenuItem;
 
-    @FXML
-    private Button cutButton;
+    @FXML private Button cutButton;
 
-    @FXML
-    private MenuItem copyMenuItem;
+    @FXML private MenuItem copyMenuItem;
 
-    @FXML
-    private Button copyButton;
+    @FXML private Button copyButton;
 
-    @FXML
-    private MenuItem pasteMenuItem;
+    @FXML private MenuItem pasteMenuItem;
 
-    @FXML
-    private Button pasteButton;
+    @FXML private Button pasteButton;
 
-    @FXML
-    private CheckMenuItem boldMenuItem;
+    @FXML private CheckMenuItem boldMenuItem;
 
-    @FXML
-    private ToggleButton boldButton;
+    @FXML private ToggleButton boldButton;
 
-    @FXML
-    private CheckMenuItem italicMenuItem;
+    @FXML private CheckMenuItem italicMenuItem;
 
-    @FXML
-    private ToggleButton italicButton;
+    @FXML private ToggleButton italicButton;
 
-    @FXML
-    private CheckMenuItem underlineMenuItem;
+    @FXML private CheckMenuItem underlineMenuItem;
 
-    @FXML
-    private ToggleButton underlineButton;
+    @FXML private ToggleButton underlineButton;
 
-    @FXML
-    private MenuItem strikethroughMenuItem;
+    @FXML private MenuItem strikethroughMenuItem;
 
-    @FXML
-    private Button strikethroughButton;
+    @FXML private Button strikethroughButton;
 
-    @FXML
-    private MenuItem subscriptMenuItem;
+    @FXML private MenuItem subscriptMenuItem;
 
-    @FXML
-    private Button subscriptButton;
+    @FXML private Button subscriptButton;
 
-    @FXML
-    private MenuItem superscriptMenuItem;
+    @FXML private MenuItem superscriptMenuItem;
 
-    @FXML
-    private Button superscriptButton;
+    @FXML private Button superscriptButton;
 
-    @FXML
-    private MenuItem headerMenuItem;
+    @FXML private MenuItem headerMenuItem;
 
-    @FXML
-    private Button headerButton;
+    @FXML private Button headerButton;
 
-    @FXML
-    private MenuItem linkMenuItem;
+    @FXML private MenuItem linkMenuItem;
 
-    @FXML
-    private Button linkButton;
+    @FXML private Button linkButton;
 
-    @FXML
-    private MenuItem codeMenuItem;
+    @FXML private MenuItem codeMenuItem;
 
-    @FXML
-    private Button codeButton;
+    @FXML private Button codeButton;
 
-    @FXML
-    private Menu admonitionMenu;
+    @FXML private Menu admonitionMenu;
 
-    @FXML
-    private MenuButton admonitionButton;
+    @FXML private MenuButton admonitionButton;
 
-    @FXML
-    private MenuItem noteMenuItem;
+    @FXML private MenuItem noteMenuItem;
 
-    @FXML
-    private MenuItem noteButton;
+    @FXML private MenuItem noteButton;
 
-    @FXML
-    private MenuItem tipMenuItem;
+    @FXML private MenuItem tipMenuItem;
 
-    @FXML
-    private MenuItem tipButton;
+    @FXML private MenuItem tipButton;
 
-    @FXML
-    private MenuItem importantMenuItem;
+    @FXML private MenuItem importantMenuItem;
 
-    @FXML
-    private MenuItem importantButton;
+    @FXML private MenuItem importantButton;
 
-    @FXML
-    private MenuItem cautionMenuItem;
+    @FXML private MenuItem cautionMenuItem;
 
-    @FXML
-    private MenuItem cautionButton;
+    @FXML private MenuItem cautionButton;
 
-    @FXML
-    private MenuItem warningMenuItem;
+    @FXML private MenuItem warningMenuItem;
 
-    @FXML
-    private MenuItem warningButton;
+    @FXML private MenuItem warningButton;
 
-    @FXML
-    private Menu blocksMenu;
+    @FXML private Menu blocksMenu;
 
-    @FXML
-    private MenuButton blocksButton;
+    @FXML private MenuButton blocksButton;
 
-    @FXML
-    private MenuItem sideBarMenuItem;
+    @FXML private MenuItem sideBarMenuItem;
 
-    @FXML
-    private MenuItem sideBarButton;
+    @FXML private MenuItem sideBarButton;
 
-    @FXML
-    private MenuItem exampleMenuItem;
+    @FXML private MenuItem exampleMenuItem;
 
-    @FXML
-    private MenuItem exampleButton;
+    @FXML private MenuItem exampleButton;
 
-    @FXML
-    private MenuItem passThroughMenuItem;
+    @FXML private MenuItem passThroughMenuItem;
 
-    @FXML
-    private MenuItem passThroughButton;
+    @FXML private MenuItem passThroughButton;
 
-    @FXML
-    private MenuItem quoteMenuItem;
+    @FXML private MenuItem quoteMenuItem;
 
-    @FXML
-    private MenuItem quoteButton;
+    @FXML private MenuItem quoteButton;
 
-    @FXML
-    private MenuButton htmlEntitiesButton;
+    @FXML private MenuButton htmlEntitiesButton;
 
-    @FXML
-    private MenuItem spaceButton;
+    @FXML private MenuItem spaceButton;
 
-    @FXML
-    private MenuItem dashButton;
+    @FXML private MenuItem dashButton;
 
-    @FXML
-    private MenuItem copyrightButton;
+    @FXML private MenuItem copyrightButton;
 
-    @FXML
-    private MenuItem registeredButton;
+    @FXML private MenuItem registeredButton;
 
-    @FXML
-    private Button keyboardButton;
+    @FXML private Button keyboardButton;
 
     public AsciiDoctorEditorController() {
         setApplicationMode(null);
@@ -694,7 +620,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         defaultCursor(view);
     }
 
-    private void updateToolBar(AsciiDoctorEditorView editorView){
+    private void updateToolBar(AsciiDoctorEditorView editorView) {
         final EditorState editorState = editorView.getEditorState();
         editorState.boldProperty().addListener((observable, oldValue, newValue) -> {
             boldButton.setSelected(newValue);
