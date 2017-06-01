@@ -16,7 +16,7 @@ public final class EditorState {
     private final BooleanProperty strikeThrough = new SimpleBooleanProperty(this, "strikeThrough");
     private final BooleanProperty subScript = new SimpleBooleanProperty(this, "subScript");
     private final BooleanProperty superScript = new SimpleBooleanProperty(this, "superScript");
-    private final StringProperty currentWord = new SimpleStringProperty(this, "currentWord");
+    private final StringProperty currentWordAndMarkup = new SimpleStringProperty(this, "currentWordAndMarkup");
 
     public boolean isBold() {
         return bold.get();
@@ -90,15 +90,15 @@ public final class EditorState {
         this.superScript.set(superScript);
     }
 
-    public final String getCurrentWord() {
-        return currentWord.get();
+    public final String getCurrentWordAndMarkup() {
+        return currentWordAndMarkup.get();
     }
 
-    public final StringProperty currentWordProperty() {
-        return currentWord;
+    public final StringProperty currentWordAndMarkupProperty() {
+        return currentWordAndMarkup;
     }
 
-    public final void setCurrentWord(String currentWord) {
-        this.currentWord.set(currentWord);
+    public final void setCurrentWordAndMarkup(String currentWordAndMarkup) {
+        this.currentWordAndMarkup.set(currentWordAndMarkup);
     }
 }

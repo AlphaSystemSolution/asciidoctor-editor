@@ -88,7 +88,7 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
         state.setStrikeThrough(strikeThrough);
         state.setSubScript(subScript);
         state.setSuperScript(superScript);
-        state.setCurrentWord(ApplicationHelper.getCurrentWord(editor));
+        state.setCurrentWordAndMarkup(ApplicationHelper.getCurrentWord(editor));
     }
 
     private class SkinView extends BorderPane {
