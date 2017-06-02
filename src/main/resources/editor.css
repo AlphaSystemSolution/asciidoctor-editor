@@ -15,13 +15,18 @@
 }
 
 .subscript {
-    -fx-font-size: 8pt;
-    -fx-text-origin: bottom;
+    /*-fx-font-size: 8pt;
+    -fx-text-origin: bottom;*/
 }
 
 .superscript {
-    -fx-font-size: 8pt;
-    -fx-text-origin: top;
+    /*-fx-font-size: 8pt;
+    -fx-text-origin: top;*/
+}
+
+.link {
+    -fx-underline: true;
+    -fx-text-fill: blue;
 }
 
 .arabicNormal {
