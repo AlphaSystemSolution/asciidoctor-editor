@@ -162,25 +162,23 @@ public final class ApplicationController implements ApplicationConstants {
 
         int offset = boundaryWord ? 1 : 2;
         final String styleName = bold ? BOLD_KEY : ITALIC_KEY;
-        applyMarkup(editor, styleName, markup.getMarkupBegin(), markup.getMarkupEnd(), offset);
+        applyMarkup(editor, styleName, markup, offset);
     }
 
     public void doUnderline(final AsciiDoctorTextArea editor) {
-        final Markup underline = asciiDocMarkup.getUnderline();
-        applyMarkup(editor, UNDERLINE_KEY, underline.getMarkupBegin(), underline.getMarkupEnd(), 1);
+        applyMarkup(editor, UNDERLINE_KEY, asciiDocMarkup.getUnderline(), 1);
     }
 
     public void doStrikeThrough(final AsciiDoctorTextArea editor) {
-        final Markup strikeThrough = asciiDocMarkup.getStrikeThrough();
-        applyMarkup(editor, STRIKETHROUGH_KEY, strikeThrough.getMarkupBegin(), strikeThrough.getMarkupEnd(), 1);
+        applyMarkup(editor, STRIKETHROUGH_KEY, asciiDocMarkup.getStrikeThrough(), 1);
     }
 
     public void doSubscript(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, getMarkupBegin(SUBSCRIPT_KEY), getMarkupEnd(SUPERSCRIPT_KEY), 0);
+        applyMarkup(editor, SUBSCRIPT_KEY, asciiDocMarkup.getSubscript(), 0);
     }
 
     public void doSuperscript(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, getMarkupBegin(SUPERSCRIPT_KEY), getMarkupEnd(SUPERSCRIPT_KEY), 0);
+        applyMarkup(editor, SUPERSCRIPT_KEY, asciiDocMarkup.getSuperscript(), 0);
     }
 
     public void doHeading(final AsciiDoctorTextArea editor) {
@@ -199,8 +197,7 @@ public final class ApplicationController implements ApplicationConstants {
     }
 
     public void doLink(final AsciiDoctorTextArea editor) {
-        applyMarkup(editor, getMarkupBegin(LINK_KEY), getMarkupEnd(LINK_KEY), 13);
-        editor.selectRange(editor.getAnchor(), editor.getCaretPosition() + 3);
+        applyMarkup(editor, LINK_KEY, asciiDocMarkup.getLink(), 1);
     }
 
     public void doCode(final AsciiDoctorTextArea editor) {
@@ -322,7 +319,7 @@ public final class ApplicationController implements ApplicationConstants {
         editor.requestFocus();
     }
 
-    private void applyMarkup(AsciiDoctorTextArea editor, String styleName, String markupBegin, String markupEnd, int offset) {
+    private void applyMarkup(AsciiDoctorTextArea editor, String styleName, Markup markup, int offset) {
         final IndexRange range = editor.getSelection();
         int start = -1;
         int end = 0;
@@ -356,6 +353,9 @@ public final class ApplicationController implements ApplicationConstants {
             // style is already exists, we need to remove it
             return;
         }
+
+        String markupBegin = markup.getMarkupBegin();
+        String markupEnd = markup.getMarkupEnd();
 
         // insert the markup begin and apply class
         editor.insertText(start, markupBegin);
