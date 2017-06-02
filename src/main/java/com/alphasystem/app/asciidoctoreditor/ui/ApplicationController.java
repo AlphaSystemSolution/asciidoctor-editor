@@ -18,6 +18,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.IndexRange;
 
+import org.apache.commons.lang3.StringUtils;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.ast.StructuredDocument;
@@ -187,13 +188,14 @@ public final class ApplicationController implements ApplicationConstants {
         if (caretPosition < 0) {
             return;
         }
-        final String textBeforeCaret = text.substring(0, caretPosition);
-        int indexOfNewLine = textBeforeCaret.lastIndexOf('\n');
-        final String currentLine = textBeforeCaret.substring(indexOfNewLine + 1);
-        final String markup = getMarkupBegin(HEADER_KEY);
-        final String markupSingle = format("%s ", markup);
-        String insert = currentLine.startsWith(markup) ? markup : markupSingle;
-        editor.insertText(indexOfNewLine + 1, insert);
+        editor.selectLine();
+        String currentLine = editor.getSelectedText();
+        final String markup = asciiDocMarkup.getHeader().getMarkupBegin();
+        // there has to be a single space between end of mark up and actual heading text, if there is none then add it now
+        if (StringUtils.isEmpty(currentLine) || !currentLine.startsWith(markup)) {
+            currentLine = " " + currentLine;
+        }
+        editor.replaceSelection(markup + currentLine);
     }
 
     public void doLink(final AsciiDoctorTextArea editor) {
