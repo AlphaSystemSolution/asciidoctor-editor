@@ -29,7 +29,7 @@ public final class ApplicationHelper {
     }
 
     public static boolean isEntireWordSelected(AsciiDoctorTextArea editor, EditorState editorState) {
-        final String currentWord = getCurrentWord(editor, editorState);
+        final String currentWord = editorState.getCurrentWord();
         final String selectedText = editor.getSelectedText();
         return selectedText.equals(currentWord);
     }
