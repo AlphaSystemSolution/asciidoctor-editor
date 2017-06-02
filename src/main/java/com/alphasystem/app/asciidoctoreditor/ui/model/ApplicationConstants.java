@@ -5,10 +5,6 @@ package com.alphasystem.app.asciidoctoreditor.ui.model;
  */
 public interface ApplicationConstants {
     String BOLD_KEY = "bold";
-    String BOLD_BOUNDARY_KEY = "bold.boundary";
-    String BOLD_NON_BOUNDARY_KEY = "bold.non_boundary";
-    String ITALIC_BOUNDARY_KEY = "italic.boundary";
-    String ITALIC_NON_BOUNDARY_KEY = "italic.non_boundary";
     String ITALIC_KEY = "italic";
     String UNDERLINE_KEY = "underline";
     String STRIKETHROUGH_KEY = "strikethrough";
