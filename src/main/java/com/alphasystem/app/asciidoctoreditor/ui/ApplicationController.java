@@ -191,8 +191,12 @@ public final class ApplicationController implements ApplicationConstants {
         editor.selectLine();
         String currentLine = editor.getSelectedText();
         final String markup = asciiDocMarkup.getHeader().getMarkupBegin();
+        // if there is no heading text then add a dummy one
+        if(StringUtils.isEmpty(currentLine)){
+            currentLine = "Heading";
+        }
         // there has to be a single space between end of mark up and actual heading text, if there is none then add it now
-        if (StringUtils.isEmpty(currentLine) || !currentLine.startsWith(markup)) {
+        if (!currentLine.startsWith(markup)) {
             currentLine = " " + currentLine;
         }
         editor.replaceSelection(markup + currentLine);
