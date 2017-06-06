@@ -104,8 +104,23 @@
                     onAction="#selectCustomStyleSheet"/>
 
             <!-- row 6 labels -->
-            <Label fx:id="iconsLabel" text="%icons.text" contentDisplay="RIGHT"
+            <Label fx:id="includeDirLabel" text="%includeDir.text" contentDisplay="RIGHT"
                    GridPane.columnIndex="0" GridPane.rowIndex="6">
+                <tooltip>
+                    <Tooltip text="%includeDir.toolTip"/>
+                </tooltip>
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
+                </graphic>
+            </Label>
+
+            <!-- row 7 labels -->
+            <TextField fx:id="includeDirField" disable="true" prefColumnCount="25" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+            <Button text="    ...    " GridPane.columnIndex="1" GridPane.rowIndex="7" onAction="#selectIncludeDirectory"/>
+
+            <!-- row 8 labels -->
+            <Label fx:id="iconsLabel" text="%icons.text" contentDisplay="RIGHT"
+                   GridPane.columnIndex="0" GridPane.rowIndex="8">
                 <tooltip>
                     <Tooltip text="%icons.toolTip"/>
                 </tooltip>
@@ -114,7 +129,7 @@
                 </graphic>
             </Label>
             <Label fx:id="iconsFontNameLabel" text="%iconsFontName.text" contentDisplay="RIGHT"
-                   GridPane.columnIndex="2" GridPane.rowIndex="6">
+                   GridPane.columnIndex="2" GridPane.rowIndex="8">
                 <tooltip>
                     <Tooltip text="%iconsFontName.toolTip"/>
                 </tooltip>
@@ -123,8 +138,8 @@
                 </graphic>
             </Label>
 
-            <!-- row 7 fields -->
-            <ComboBox fx:id="iconsComboBox" GridPane.columnIndex="0" GridPane.rowIndex="7">
+            <!-- row 9 fields -->
+            <ComboBox fx:id="iconsComboBox" GridPane.columnIndex="0" GridPane.rowIndex="9">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <Icons fx:value="DEFAULT"/>
@@ -132,7 +147,7 @@
                     </FXCollections>
                 </items>
             </ComboBox>
-            <ComboBox fx:id="iconsFontNameComboBox" GridPane.columnIndex="2" GridPane.rowIndex="7">
+            <ComboBox fx:id="iconsFontNameComboBox" GridPane.columnIndex="2" GridPane.rowIndex="9">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <IconFontName fx:value="DEFAULT"/>
@@ -141,10 +156,10 @@
                 </items>
             </ComboBox>
 
-            <!-- row 9 -->
+            <!-- row 10 -->
             <CheckBox fx:id="omitLastUpdatedTimeStampCheckBox" text="%omitLastUpdatedTimeStamp.text"
                       contentDisplay="RIGHT"
-                      GridPane.columnIndex="0" GridPane.rowIndex="9">
+                      GridPane.columnIndex="0" GridPane.rowIndex="10">
                 <tooltip>
                     <Tooltip text="%omitLastUpdatedTimeStamp.toolTip"/>
                 </tooltip>

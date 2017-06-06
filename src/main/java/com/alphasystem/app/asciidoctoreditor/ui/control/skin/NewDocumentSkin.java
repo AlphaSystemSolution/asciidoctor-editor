@@ -57,6 +57,9 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
         private TextField styleSheetField;
 
         @FXML
+        private TextField includeDirField;
+
+        @FXML
         private ComboBox<Icons> iconsComboBox;
 
         @FXML
@@ -96,6 +99,7 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
             documentTitleField.textProperty().bindBidirectional(view.documentTitleProperty());
             stylesDirField.textProperty().bindBidirectional(view.stylesDirProperty());
             styleSheetField.textProperty().bindBidirectional(view.customStyleSheetFileProperty());
+            includeDirField.textProperty().bindBidirectional(view.includeDirProperty());
             iconsComboBox.valueProperty().bindBidirectional(view.iconsProperty());
             iconsFontNameComboBox.valueProperty().bindBidirectional(view.iconFontNameProperty());
             iconsComboBox.valueProperty().addListener((o, ov, nv) -> {
@@ -138,6 +142,14 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
             final File file = fileChooser.showOpenDialog(view.getScene().getWindow());
             if (file != null) {
                 styleSheetField.setText(file.getPath());
+            }
+        }
+
+        @FXML
+        void selectIncludeDirectory(){
+            final File directory = directoryChooser.showDialog(getSkinnable().getScene().getWindow());
+            if (directory != null) {
+                includeDirField.setText(directory.getPath());
             }
         }
     }

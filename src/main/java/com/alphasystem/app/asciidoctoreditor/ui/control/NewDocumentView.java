@@ -38,6 +38,7 @@ public class NewDocumentView extends Control {
     private final StringProperty baseDir = new SimpleStringProperty(null, "baseDir");
     private final StringProperty stylesDir = new SimpleStringProperty(null, "stylesDir");
     private final StringProperty customStyleSheetFile = new SimpleStringProperty(null, "customStyleSheetFile");
+    private final StringProperty includeDir = new SimpleStringProperty(null, "includeDir");
     private final BooleanProperty linkCss = new SimpleBooleanProperty(true, "linkCss");
     private final ObjectProperty<Icons> icons = new SimpleObjectProperty<>(null, "icons");
     private final ObjectProperty<IconFontName> iconFontName = new SimpleObjectProperty<>(null, "iconFontName");
@@ -63,6 +64,7 @@ public class NewDocumentView extends Control {
             if (Objects.nonNull(customStyleSheetFile) && customStyleSheetFile.exists()) {
                 setCustomStyleSheetFile(customStyleSheetFile.getPath());
             }
+            setIncludeDir(nv.getIncludeDir());
             setLinkCss(nv.isLinkCss());
             setIcons(Icons.fromValue(nv.getIcons()));
             setIconFontName(IconFontName.fromDisplayName(nv.getIconFontName()));
@@ -96,6 +98,7 @@ public class NewDocumentView extends Control {
             }
             getPropertyInfo().setCustomStyleSheetFile(customStyleSheetFile);
         });
+        includeDirProperty().addListener((o, ov, nv) -> getPropertyInfo().setIncludeDir(nv));
         linkCssProperty().addListener((o, ov, nv) -> getPropertyInfo().setLinkCss(nv));
         iconsProperty().addListener((o, ov, nv) -> {
             final boolean none = (nv == null) || Icons.DEFAULT.equals(nv);
@@ -202,6 +205,18 @@ public class NewDocumentView extends Control {
 
     public final StringProperty customStyleSheetFileProperty() {
         return customStyleSheetFile;
+    }
+
+    public final String getIncludeDir() {
+        return includeDir.get();
+    }
+
+    public final StringProperty includeDirProperty() {
+        return includeDir;
+    }
+
+    public final void setIncludeDir(String includeDir) {
+        this.includeDir.set(includeDir);
     }
 
     public final BooleanProperty linkCssProperty() {

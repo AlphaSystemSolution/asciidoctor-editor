@@ -292,6 +292,12 @@ public final class ApplicationController implements ApplicationConstants {
             path = ApplicationHelper.convertToUnixFilePath(path);
             lines.add(format(":stylesdir: file:/{basedir}/%s", path));
         }
+        final String includeDir = propertyInfo.getIncludeDir();
+        if(includeDir != null) {
+            String path = AppUtil.toRelativePath(baseDir, includeDir).toString();
+            path = ApplicationHelper.convertToUnixFilePath(path);
+            lines.add(format(":includedir: {basedir}/%s", path));
+        }
         final String icons = propertyInfo.getIcons();
         if (!isBlank(icons)) {
             lines.add(format(":icons: %s", icons));
