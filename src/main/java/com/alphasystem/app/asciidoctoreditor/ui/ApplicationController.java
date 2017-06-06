@@ -36,6 +36,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
 import com.alphasystem.app.asciidoctoreditor.ui.util.ApplicationHelper;
 import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import com.alphasystem.asciidoc.model.Backend;
+import com.alphasystem.util.AppUtil;
 
 import static com.alphasystem.docbook.DocumentBuilder.buildDocument;
 import static com.alphasystem.util.nio.NIOFileUtils.copyDir;
@@ -192,7 +193,7 @@ public final class ApplicationController implements ApplicationConstants {
         String currentLine = editor.getSelectedText();
         final String markup = asciiDocMarkup.getHeader().getMarkupBegin();
         // if there is no heading text then add a dummy one
-        if(StringUtils.isEmpty(currentLine)){
+        if (StringUtils.isEmpty(currentLine)) {
             currentLine = "Heading";
         }
         // there has to be a single space between end of mark up and actual heading text, if there is none then add it now
@@ -253,13 +254,22 @@ public final class ApplicationController implements ApplicationConstants {
 
     private void copyResources(final AsciiDocumentInfo propertyInfo) throws IOException, URISyntaxException {
         File baseDir = new File(propertyInfo.getSrcFile().getParent());
-        File stylesDir = new File(baseDir, propertyInfo.getStylesDir());
-        if (!stylesDir.exists()) {
-            stylesDir.mkdirs();
+        final String stylesDir1 = propertyInfo.getStylesDir();
+        File stylesDir = null;
+        if (stylesDir1 != null) {
+            stylesDir = new File(baseDir, stylesDir1);
+            if (!stylesDir.exists()) {
+                @SuppressWarnings("unused") final boolean mkdirs = stylesDir.mkdirs();
+            }
+            final File customStyleSheetFile = propertyInfo.getCustomStyleSheetFile();
+            if (customStyleSheetFile != null) {
+                copyStyleSheet(customStyleSheetFile, stylesDir);
+            }
         }
-        copyStyleSheet(propertyInfo, stylesDir);
+
+
         final String iconFontName = propertyInfo.getIconFontName();
-        if (isNotBlank(iconFontName)) {
+        if (stylesDir !=null && isNotBlank(iconFontName)) {
             if ("font-awesome".equals(iconFontName)) {
                 copyDir(stylesDir.toPath(), "templates/font-awesome/css", getClass());
                 copyDir(get(stylesDir.getParent(), "fonts"), "templates/font-awesome/fonts", getClass());
@@ -267,15 +277,11 @@ public final class ApplicationController implements ApplicationConstants {
         }
     }
 
-    private void copyStyleSheet(AsciiDocumentInfo propertyInfo, File stylesDir) throws IOException {
-        final File srcStyleSheet = propertyInfo.getCustomStyleSheetFile();
-        if (srcStyleSheet != null) {
-            File targetStyleSheet = new File(stylesDir, srcStyleSheet.getName());
-            try (InputStream inputStream = newInputStream(srcStyleSheet.toPath(), READ);
-                 OutputStream outputStream = newOutputStream(targetStyleSheet.toPath(), WRITE, CREATE)) {
-                fastCopy(inputStream, outputStream);
-            }
-
+    private void copyStyleSheet(File srcStyleSheet, File stylesDir) throws IOException {
+        File targetStyleSheet = new File(stylesDir, srcStyleSheet.getName());
+        try (InputStream inputStream = newInputStream(srcStyleSheet.toPath(), READ);
+             OutputStream outputStream = newOutputStream(targetStyleSheet.toPath(), WRITE, CREATE)) {
+            fastCopy(inputStream, outputStream);
         }
     }
 
@@ -285,9 +291,13 @@ public final class ApplicationController implements ApplicationConstants {
         lines.add(format(":doctype: %s", propertyInfo.getDocumentType()));
         lines.add(":encoding: utf-8");
         lines.add(":lang: en");
+        final String baseDir = propertyInfo.getBaseDir();
+        lines.add(format(":basedir: %s", ApplicationHelper.convertToUnixFilePath(baseDir)));
         final String stylesDir = propertyInfo.getStylesDir();
-        if (stylesDir != null && !".".equals(stylesDir)) {
-            lines.add(format(":stylesdir: %s", stylesDir));
+        if (stylesDir != null) {
+            String path = AppUtil.toRelativePath(baseDir, stylesDir).toString();
+            path = ApplicationHelper.convertToUnixFilePath(path);
+            lines.add(format(":stylesdir: file:/{basedir}/%s", path));
         }
         final String icons = propertyInfo.getIcons();
         if (!isBlank(icons)) {
@@ -301,6 +311,8 @@ public final class ApplicationController implements ApplicationConstants {
         final boolean linkCss = propertyInfo.isLinkCss();
         if (linkCss) {
             lines.add(":linkcss:");
+        } else {
+            lines.add(":linkcss!:");
         }
         final boolean docInfo2 = propertyInfo.isDocInfo2();
         if (docInfo2) {
