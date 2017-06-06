@@ -49,7 +49,6 @@ import static java.nio.file.Paths.get;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.READ;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -98,18 +97,13 @@ public final class ApplicationController implements ApplicationConstants {
         this.currentEditorState = currentEditorState;
     }
 
-    public void doNewDocAction(final AsciiDocumentInfo propertyInfo, boolean skipCopyResources,
-                               EventHandler<WorkerStateEvent> onFailed,
-                               EventHandler<WorkerStateEvent> onSucceeded) {
-        CopyResourcesService service = new CopyResourcesService(skipCopyResources, propertyInfo);
+    public void doNewDocAction(final AsciiDocumentInfo propertyInfo,
+                                EventHandler<WorkerStateEvent> onFailed,
+                                EventHandler<WorkerStateEvent> onSucceeded) {
+        CopyResourcesService service = new CopyResourcesService(propertyInfo);
         service.setOnFailed(onFailed);
         service.setOnSucceeded(onSucceeded);
         service.start();
-    }
-
-    public void doNewDocAction(final AsciiDocumentInfo propertyInfo, EventHandler<WorkerStateEvent> onFailed,
-                               EventHandler<WorkerStateEvent> onSucceeded) {
-        doNewDocAction(propertyInfo, false, onFailed, onSucceeded);
     }
 
     public void doOpenAction(final File docFile, EventHandler<WorkerStateEvent> onFailed,
@@ -184,7 +178,6 @@ public final class ApplicationController implements ApplicationConstants {
     }
 
     public void doHeading(final AsciiDoctorTextArea editor) {
-        String text = editor.getText();
         final int caretPosition = editor.getCaretPosition();
         if (caretPosition < 0) {
             return;
@@ -269,7 +262,7 @@ public final class ApplicationController implements ApplicationConstants {
 
 
         final String iconFontName = propertyInfo.getIconFontName();
-        if (stylesDir !=null && isNotBlank(iconFontName)) {
+        if (stylesDir != null && isNotBlank(iconFontName)) {
             if ("font-awesome".equals(iconFontName)) {
                 copyDir(stylesDir.toPath(), "templates/font-awesome/css", getClass());
                 copyDir(get(stylesDir.getParent(), "fonts"), "templates/font-awesome/fonts", getClass());
@@ -339,8 +332,8 @@ public final class ApplicationController implements ApplicationConstants {
 
     private void applyMarkup(AsciiDoctorTextArea editor, String styleName, Markup markup, int offset) {
         final IndexRange range = editor.getSelection();
-        int start = -1;
-        int end = 0;
+        int start;
+        int end;
         final boolean hasSelection = (range != null) && (range.getLength() > 0);
         if (hasSelection) {
             // get the start and end of current range
@@ -442,11 +435,9 @@ public final class ApplicationController implements ApplicationConstants {
 
     private class CopyResourcesService extends Service<File> {
 
-        private final boolean skipCopyResources;
         private final AsciiDocumentInfo propertyInfo;
 
-        private CopyResourcesService(boolean skipCopyResources, final AsciiDocumentInfo propertyInfo) {
-            this.skipCopyResources = skipCopyResources;
+        private CopyResourcesService(final AsciiDocumentInfo propertyInfo) {
             this.propertyInfo = propertyInfo;
         }
 
@@ -455,9 +446,7 @@ public final class ApplicationController implements ApplicationConstants {
             return new Task<File>() {
                 @Override
                 protected File call() throws Exception {
-                    if (!skipCopyResources) {
-                        copyResources(propertyInfo);
-                    }
+                    copyResources(propertyInfo);
                     createNewDocument(propertyInfo);
                     return propertyInfo.getSrcFile();
                 }
@@ -472,9 +461,6 @@ public final class ApplicationController implements ApplicationConstants {
 
         private ExportDocumentService(AsciiDocumentInfo documentInfo, String content, Backend backend) {
             this.documentInfo = documentInfo;
-            final File srcFile = documentInfo.getSrcFile();
-            final String baseName = getBaseName(srcFile.getName());
-            final String fileName = format("%s.%s", baseName, backend.getExtension());
             documentInfo.setBackend(backend.getValue());
             this.content = content;
         }
