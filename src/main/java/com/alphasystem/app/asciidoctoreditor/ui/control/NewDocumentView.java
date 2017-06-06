@@ -1,16 +1,24 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
+import java.io.File;
+import java.util.Objects;
+
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.control.Control;
+import javafx.scene.control.Skin;
+
 import com.alphasystem.app.asciidoctoreditor.ui.control.skin.NewDocumentSkin;
 import com.alphasystem.app.asciidoctoreditor.ui.model.DocumentType;
 import com.alphasystem.app.asciidoctoreditor.ui.model.IconFontName;
 import com.alphasystem.app.asciidoctoreditor.ui.model.Icons;
 import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
-import javafx.beans.property.*;
-import javafx.scene.control.Control;
-import javafx.scene.control.Skin;
-
-import java.io.File;
-import java.util.Objects;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -79,8 +87,7 @@ public class NewDocumentView extends Control {
             updateNeedRequired();
         });
         stylesDirProperty().addListener((o, ov, nv) -> {
-            String value = (nv != null && nv.equals(DEFAULT_STYLES_DIR)) ? "." : nv;
-            getPropertyInfo().setStylesDir(value);
+            getPropertyInfo().setStylesDir(nv);
         });
         customStyleSheetFileProperty().addListener((o, ov, nv) -> {
             File customStyleSheetFile = null;
@@ -117,6 +124,7 @@ public class NewDocumentView extends Control {
             setPropertyInfo(new AsciiDocumentInfo());
             pi = this.propertyInfo.get();
         }
+        pi.setLinkCss(false);
         return pi;
     }
 

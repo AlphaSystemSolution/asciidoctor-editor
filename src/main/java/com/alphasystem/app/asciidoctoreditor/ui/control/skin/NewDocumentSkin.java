@@ -1,9 +1,9 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control.skin;
 
-import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentView;
-import com.alphasystem.app.asciidoctoreditor.ui.model.DocumentType;
-import com.alphasystem.app.asciidoctoreditor.ui.model.IconFontName;
-import com.alphasystem.app.asciidoctoreditor.ui.model.Icons;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
@@ -14,14 +14,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentView;
+import com.alphasystem.app.asciidoctoreditor.ui.model.DocumentType;
+import com.alphasystem.app.asciidoctoreditor.ui.model.IconFontName;
+import com.alphasystem.app.asciidoctoreditor.ui.model.Icons;
 
-import static com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentView.DEFAULT_STYLES_DIR;
 import static com.alphasystem.util.AppUtil.USER_HOME_DIR;
 import static java.util.ResourceBundle.getBundle;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
@@ -53,9 +52,6 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
 
         @FXML
         private TextField stylesDirField;
-
-        @FXML
-        private CheckBox linkCSSCheckBox;
 
         @FXML
         private TextField styleSheetField;
@@ -99,13 +95,6 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
             baseDirectoryField.textProperty().bindBidirectional(view.baseDirProperty());
             documentTitleField.textProperty().bindBidirectional(view.documentTitleProperty());
             stylesDirField.textProperty().bindBidirectional(view.stylesDirProperty());
-            stylesDirField.textProperty().addListener((o, ov, nv) -> {
-                final boolean blank = isBlank(nv);
-                if (blank) {
-                    stylesDirField.setText(DEFAULT_STYLES_DIR);
-                }
-            });
-            linkCSSCheckBox.selectedProperty().bindBidirectional(view.linkCssProperty());
             styleSheetField.textProperty().bindBidirectional(view.customStyleSheetFileProperty());
             iconsComboBox.valueProperty().bindBidirectional(view.iconsProperty());
             iconsFontNameComboBox.valueProperty().bindBidirectional(view.iconFontNameProperty());
@@ -125,6 +114,15 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
             final File directory = directoryChooser.showDialog(getSkinnable().getScene().getWindow());
             if (directory != null) {
                 baseDirectoryField.setText(directory.getPath());
+                directoryChooser.setInitialDirectory(directory);
+            }
+        }
+
+        @FXML
+        void selectStyleDirectory(){
+            final File directory = directoryChooser.showDialog(getSkinnable().getScene().getWindow());
+            if (directory != null) {
+                stylesDirField.setText(directory.getPath());
             }
         }
 

@@ -85,15 +85,6 @@
                     <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
                 </graphic>
             </Label>
-            <Label fx:id="linkCSSLabel" text="%linkCSS.text" contentDisplay="RIGHT"
-                   GridPane.columnIndex="1" GridPane.rowIndex="4">
-                <tooltip>
-                    <Tooltip text="%linkCSS.toolTip"/>
-                </tooltip>
-                <graphic>
-                    <FontAwesomeIconView glyphName="INFO_CIRCLE" glyphStyle="-fx-fill: blue;"/>
-                </graphic>
-            </Label>
             <Label fx:id="customStyleSheetLabel" text="%customStyleSheet.text" contentDisplay="RIGHT"
                    GridPane.columnIndex="2" GridPane.rowIndex="4">
                 <tooltip>
@@ -105,8 +96,8 @@
             </Label>
 
             <!-- row 5 fields -->
-            <TextField fx:id="stylesDirField" prefColumnCount="25" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-            <CheckBox fx:id="linkCSSCheckBox" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+            <TextField fx:id="stylesDirField" disable="true" prefColumnCount="25" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+            <Button text="    ...    " GridPane.columnIndex="1" GridPane.rowIndex="5" onAction="#selectStyleDirectory"/>
             <TextField fx:id="styleSheetField" disable="true" prefColumnCount="25" GridPane.columnIndex="2"
                        GridPane.rowIndex="5"/>
             <Button text="    ...    " GridPane.columnIndex="3" GridPane.rowIndex="5"
