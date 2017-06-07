@@ -12,6 +12,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
 import com.alphasystem.app.asciidoctoreditor.ui.model.AsciiDocMarkup;
 import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
 import com.alphasystem.spring.support.ApplicationContextProvider;
+import com.alphasystem.util.AppUtil;
 
 /**
  * @author sali
@@ -172,8 +173,13 @@ public final class ApplicationHelper {
         return builder.toString();
     }
 
-    public static String convertToUnixFilePath(String srcPath){
+    public static String convertToUnixFilePath(String srcPath) {
         return srcPath.replace(File.separator, "/");
+    }
+
+    public static String getRelativePathString(String basePath, String path) {
+        final String relativePath = AppUtil.toRelativePath(basePath, path).toString();
+        return convertToUnixFilePath(relativePath);
     }
 
     /**

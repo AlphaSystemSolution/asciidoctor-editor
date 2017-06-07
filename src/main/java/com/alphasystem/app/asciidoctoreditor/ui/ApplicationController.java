@@ -36,8 +36,9 @@ import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
 import com.alphasystem.app.asciidoctoreditor.ui.util.ApplicationHelper;
 import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 import com.alphasystem.asciidoc.model.Backend;
-import com.alphasystem.util.AppUtil;
 
+import static com.alphasystem.app.asciidoctoreditor.ui.util.ApplicationHelper.convertToUnixFilePath;
+import static com.alphasystem.app.asciidoctoreditor.ui.util.ApplicationHelper.getRelativePathString;
 import static com.alphasystem.docbook.DocumentBuilder.buildDocument;
 import static com.alphasystem.util.nio.NIOFileUtils.copyDir;
 import static com.alphasystem.util.nio.NIOFileUtils.fastCopy;
@@ -285,24 +286,18 @@ public final class ApplicationController implements ApplicationConstants {
         lines.add(":encoding: utf-8");
         lines.add(":lang: en");
         final String baseDir = propertyInfo.getBaseDir();
-        lines.add(format(":basedir: %s", ApplicationHelper.convertToUnixFilePath(baseDir)));
+        lines.add(format(":basedir: %s", convertToUnixFilePath(baseDir)));
         final String stylesDir = propertyInfo.getStylesDir();
         if (stylesDir != null) {
-            String path = AppUtil.toRelativePath(baseDir, stylesDir).toString();
-            path = ApplicationHelper.convertToUnixFilePath(path);
-            lines.add(format(":stylesdir: file:/{basedir}/%s", path));
+            lines.add(format(":stylesdir: file:/{basedir}/%s", getRelativePathString(baseDir, stylesDir)));
         }
         final String includeDir = propertyInfo.getIncludeDir();
         if (includeDir != null) {
-            String path = AppUtil.toRelativePath(baseDir, includeDir).toString();
-            path = ApplicationHelper.convertToUnixFilePath(path);
-            lines.add(format(":includedir: {basedir}/%s", path));
+            lines.add(format(":includedir: {basedir}/%s", getRelativePathString(baseDir, includeDir)));
         }
         final String docInfoDir = propertyInfo.getDocInfoDir();
         if (docInfoDir != null) {
-            String path = AppUtil.toRelativePath(baseDir, docInfoDir).toString();
-            path = ApplicationHelper.convertToUnixFilePath(path);
-            lines.add(format(":docinfodir: {basedir}/%s", path));
+            lines.add(format(":docinfodir: {basedir}/%s", getRelativePathString(baseDir, docInfoDir)));
         }
         final String icons = propertyInfo.getIcons();
         if (!isBlank(icons)) {
