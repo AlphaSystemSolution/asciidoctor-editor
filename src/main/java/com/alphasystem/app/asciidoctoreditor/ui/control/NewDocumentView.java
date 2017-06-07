@@ -39,6 +39,7 @@ public class NewDocumentView extends Control {
     private final StringProperty stylesDir = new SimpleStringProperty(null, "stylesDir");
     private final StringProperty customStyleSheetFile = new SimpleStringProperty(null, "customStyleSheetFile");
     private final StringProperty includeDir = new SimpleStringProperty(null, "includeDir");
+    private final StringProperty docInfoDir = new SimpleStringProperty(null, "docInfoDir");
     private final BooleanProperty linkCss = new SimpleBooleanProperty(true, "linkCss");
     private final ObjectProperty<Icons> icons = new SimpleObjectProperty<>(null, "icons");
     private final ObjectProperty<IconFontName> iconFontName = new SimpleObjectProperty<>(null, "iconFontName");
@@ -65,6 +66,7 @@ public class NewDocumentView extends Control {
                 setCustomStyleSheetFile(customStyleSheetFile.getPath());
             }
             setIncludeDir(nv.getIncludeDir());
+            setDocInfoDir(nv.getDocInfoDir());
             setLinkCss(nv.isLinkCss());
             setIcons(Icons.fromValue(nv.getIcons()));
             setIconFontName(IconFontName.fromDisplayName(nv.getIconFontName()));
@@ -99,6 +101,7 @@ public class NewDocumentView extends Control {
             getPropertyInfo().setCustomStyleSheetFile(customStyleSheetFile);
         });
         includeDirProperty().addListener((o, ov, nv) -> getPropertyInfo().setIncludeDir(nv));
+        docInfoDirProperty().addListener((o, ov, nv) -> getPropertyInfo().setDocInfoDir(nv));
         linkCssProperty().addListener((o, ov, nv) -> getPropertyInfo().setLinkCss(nv));
         iconsProperty().addListener((o, ov, nv) -> {
             final boolean none = (nv == null) || Icons.DEFAULT.equals(nv);
@@ -217,6 +220,18 @@ public class NewDocumentView extends Control {
 
     public final void setIncludeDir(String includeDir) {
         this.includeDir.set(includeDir);
+    }
+
+    public final String getDocInfoDir() {
+        return docInfoDir.get();
+    }
+
+    public final StringProperty docInfoDirProperty() {
+        return docInfoDir;
+    }
+
+    public final void setDocInfoDir(String docInfoDir) {
+        this.docInfoDir.set(docInfoDir);
     }
 
     public final BooleanProperty linkCssProperty() {

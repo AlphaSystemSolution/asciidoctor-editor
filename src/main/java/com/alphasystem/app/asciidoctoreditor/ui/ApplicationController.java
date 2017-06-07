@@ -98,8 +98,8 @@ public final class ApplicationController implements ApplicationConstants {
     }
 
     public void doNewDocAction(final AsciiDocumentInfo propertyInfo,
-                                EventHandler<WorkerStateEvent> onFailed,
-                                EventHandler<WorkerStateEvent> onSucceeded) {
+                               EventHandler<WorkerStateEvent> onFailed,
+                               EventHandler<WorkerStateEvent> onSucceeded) {
         CopyResourcesService service = new CopyResourcesService(propertyInfo);
         service.setOnFailed(onFailed);
         service.setOnSucceeded(onSucceeded);
@@ -293,10 +293,16 @@ public final class ApplicationController implements ApplicationConstants {
             lines.add(format(":stylesdir: file:/{basedir}/%s", path));
         }
         final String includeDir = propertyInfo.getIncludeDir();
-        if(includeDir != null) {
+        if (includeDir != null) {
             String path = AppUtil.toRelativePath(baseDir, includeDir).toString();
             path = ApplicationHelper.convertToUnixFilePath(path);
             lines.add(format(":includedir: {basedir}/%s", path));
+        }
+        final String docInfoDir = propertyInfo.getDocInfoDir();
+        if (docInfoDir != null) {
+            String path = AppUtil.toRelativePath(baseDir, docInfoDir).toString();
+            path = ApplicationHelper.convertToUnixFilePath(path);
+            lines.add(format(":docinfodir: {basedir}/%s", path));
         }
         final String icons = propertyInfo.getIcons();
         if (!isBlank(icons)) {

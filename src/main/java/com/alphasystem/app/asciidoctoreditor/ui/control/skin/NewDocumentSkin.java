@@ -60,6 +60,9 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
         private TextField includeDirField;
 
         @FXML
+        private TextField docInfoDirField;
+
+        @FXML
         private ComboBox<Icons> iconsComboBox;
 
         @FXML
@@ -100,6 +103,7 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
             stylesDirField.textProperty().bindBidirectional(view.stylesDirProperty());
             styleSheetField.textProperty().bindBidirectional(view.customStyleSheetFileProperty());
             includeDirField.textProperty().bindBidirectional(view.includeDirProperty());
+            docInfoDirField.textProperty().bindBidirectional(view.docInfoDirProperty());
             iconsComboBox.valueProperty().bindBidirectional(view.iconsProperty());
             iconsFontNameComboBox.valueProperty().bindBidirectional(view.iconFontNameProperty());
             iconsComboBox.valueProperty().addListener((o, ov, nv) -> {
@@ -123,7 +127,7 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
         }
 
         @FXML
-        void selectStyleDirectory(){
+        void selectStyleDirectory() {
             final File directory = directoryChooser.showDialog(getSkinnable().getScene().getWindow());
             if (directory != null) {
                 stylesDirField.setText(directory.getPath());
@@ -146,10 +150,18 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
         }
 
         @FXML
-        void selectIncludeDirectory(){
+        void selectIncludeDirectory() {
             final File directory = directoryChooser.showDialog(getSkinnable().getScene().getWindow());
             if (directory != null) {
                 includeDirField.setText(directory.getPath());
+            }
+        }
+
+        @FXML
+        void selectDocInfoDirectory() {
+            final File directory = directoryChooser.showDialog(getSkinnable().getScene().getWindow());
+            if (directory != null) {
+                docInfoDirField.setText(directory.getPath());
             }
         }
     }
