@@ -1,7 +1,10 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -11,15 +14,25 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 
 import com.alphasystem.app.asciidoctoreditor.ui.control.skin.NewDocumentSkin;
+import com.alphasystem.app.asciidoctoreditor.ui.model.DocInfoType;
 import com.alphasystem.app.asciidoctoreditor.ui.model.DocumentType;
 import com.alphasystem.app.asciidoctoreditor.ui.model.IconFontName;
 import com.alphasystem.app.asciidoctoreditor.ui.model.Icons;
 import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 
+import static com.alphasystem.app.asciidoctoreditor.ui.model.DocInfoType.PRIVATE;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.DocInfoType.PRIVATE_FOOTER;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.DocInfoType.PRIVATE_HEAD;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.DocInfoType.SHARED;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.DocInfoType.SHARED_FOOTER;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.DocInfoType.SHARED_HEAD;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -46,6 +59,7 @@ public class NewDocumentView extends Control {
     private final BooleanProperty docInfo2 = new SimpleBooleanProperty(null, "docInfo2");
     private final BooleanProperty omitLastUpdatedTimeStamp = new SimpleBooleanProperty(null, "omitLastUpdatedTimeStamp");
     private final ReadOnlyBooleanWrapper needRequired = new ReadOnlyBooleanWrapper(null, "needRequired");
+    private final ObservableList<DocInfoType> docInfoTypes = FXCollections.observableArrayList();
 
     public NewDocumentView() {
         propertyInfoProperty().addListener((o, ov, nv) -> {
@@ -115,6 +129,7 @@ public class NewDocumentView extends Control {
             String value = ((nv == null) || IconFontName.DEFAULT.equals(nv)) ? null : nv.getDispalyName();
             getPropertyInfo().setIconFontName(value);
         });
+        getDocInfoTypes().addListener(this::createDocInfo);
         docInfo2Property().addListener((o, ov, nv) -> getPropertyInfo().setDocInfo2(nv));
         omitLastUpdatedTimeStampProperty().addListener((o, ov, nv) -> getPropertyInfo().setOmitLastUpdatedTimeStamp(nv));
         setPropertyInfo(null);
@@ -122,6 +137,28 @@ public class NewDocumentView extends Control {
         setMaxWidth(MAX_WIDTH);
         updateNeedRequired();
         setSkin(new NewDocumentSkin(this));
+    }
+
+    private void createDocInfo(ListChangeListener.Change<? extends DocInfoType> c) {
+        List<String> docInfos = new ArrayList<>();
+        final ObservableList<? extends DocInfoType> list = c.getList();
+        if (list.contains(SHARED_HEAD) && list.contains(SHARED_FOOTER)) {
+            docInfos.add(SHARED.getValue());
+        } else if (list.contains(SHARED_HEAD)) {
+            docInfos.add(SHARED_HEAD.getValue());
+        } else if (list.contains(SHARED_FOOTER)) {
+            docInfos.add(SHARED_FOOTER.getValue());
+        }
+
+        if (list.contains(PRIVATE_HEAD) && list.contains(PRIVATE_FOOTER)) {
+            docInfos.add(PRIVATE.getValue());
+        } else if (list.contains(PRIVATE_HEAD)) {
+            docInfos.add(PRIVATE_HEAD.getValue());
+        } else if (list.contains(PRIVATE_FOOTER)) {
+            docInfos.add(PRIVATE_HEAD.getValue());
+        }
+
+        getPropertyInfo().setDocInfo(docInfos.stream().collect(Collectors.joining(",")));
     }
 
     public final AsciiDocumentInfo getPropertyInfo() {
@@ -284,6 +321,10 @@ public class NewDocumentView extends Control {
 
     public final ReadOnlyBooleanProperty needRequiredProperty() {
         return needRequired.getReadOnlyProperty();
+    }
+
+    public ObservableList<DocInfoType> getDocInfoTypes() {
+        return docInfoTypes;
     }
 
     private void updateSrcFile(final String baseDir, final String documentName) {

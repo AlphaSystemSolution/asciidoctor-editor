@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
@@ -14,7 +15,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
+import org.controlsfx.control.CheckComboBox;
+
 import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentView;
+import com.alphasystem.app.asciidoctoreditor.ui.model.DocInfoType;
 import com.alphasystem.app.asciidoctoreditor.ui.model.DocumentType;
 import com.alphasystem.app.asciidoctoreditor.ui.model.IconFontName;
 import com.alphasystem.app.asciidoctoreditor.ui.model.Icons;
@@ -69,6 +73,9 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
         private ComboBox<IconFontName> iconsFontNameComboBox;
 
         @FXML
+        private CheckComboBox<DocInfoType> docInfoComboBox;
+
+        @FXML
         private CheckBox omitLastUpdatedTimeStampCheckBox;
 
         SkinView() {
@@ -95,6 +102,18 @@ public class NewDocumentSkin extends SkinBase<NewDocumentView> {
         void initialize() {
             final NewDocumentView view = getSkinnable();
 
+            final DocInfoType[] docInfoTypes = DocInfoType.values();
+            docInfoComboBox.getItems().addAll(DocInfoType.SHARED_HEAD, DocInfoType.SHARED_FOOTER, DocInfoType.PRIVATE_HEAD, DocInfoType.PRIVATE_FOOTER);
+            docInfoComboBox.getCheckModel().getCheckedIndices().addListener((ListChangeListener<? super Integer>) c -> {
+                while (c.next()) {
+                    if (c.wasAdded()) {
+                        c.getAddedSubList().forEach(o -> view.getDocInfoTypes().add(docInfoTypes[o]));
+                    }
+                    if (c.wasRemoved()) {
+                        c.getRemoved().forEach(o -> view.getDocInfoTypes().remove(docInfoTypes[o]));
+                    }
+                }
+            });
             documentTypeComboBox.getSelectionModel().select(1);
             documentTypeComboBox.valueProperty().bindBidirectional(view.documentTypeProperty());
             documentNameField.textProperty().bindBidirectional(view.documentNameProperty());

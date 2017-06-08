@@ -299,6 +299,10 @@ public final class ApplicationController implements ApplicationConstants {
         if (docInfoDir != null) {
             lines.add(format(":docinfodir: {basedir}/%s", getRelativePathString(baseDir, docInfoDir)));
         }
+        final String docInfo = propertyInfo.getDocInfo();
+        if (!StringUtils.isEmpty(docInfo)) {
+            lines.add(format(":docinfo: %s", docInfo));
+        }
         final String icons = propertyInfo.getIcons();
         if (!isBlank(icons)) {
             lines.add(format(":icons: %s", icons));
