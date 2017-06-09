@@ -249,7 +249,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
 
         initialFile.addListener((o, ov, nv) -> updateFile(nv));
         applicationMode.addListener((o, ov, nv) -> updateApplicationMode(nv));
-        keyboardView.htmlCodeValueProperty().addListener((o, ov, nv) -> {
+        keyboardView.unicodeValueProperty().addListener((o, ov, nv) -> {
             if (nv == null) {
                 return;
             }
