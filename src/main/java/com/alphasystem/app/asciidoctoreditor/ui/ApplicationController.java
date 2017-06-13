@@ -215,6 +215,10 @@ public final class ApplicationController implements ApplicationConstants {
         editor.replaceSelection(getMarkupBegin(key));
     }
 
+    public void doArabicStyles(final AsciiDoctorTextArea editor, final String style) {
+        System.out.println(style);
+    }
+
     public void doBlock(final AsciiDoctorTextArea editor, final String blockTypeKey) {
         applyMarkup(editor, getMarkupBegin(blockTypeKey), getMarkupEnd(blockTypeKey), 6);
     }

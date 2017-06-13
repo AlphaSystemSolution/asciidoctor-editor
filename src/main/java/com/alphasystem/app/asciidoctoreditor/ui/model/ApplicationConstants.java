@@ -27,4 +27,8 @@ public interface ApplicationConstants {
     String EXAMPLE_KEY = "blocks.example";
     String PASS_THROUGH_KEY = "blocks.passThrough";
     String QUOTE_KEY = "blocks.quote";
+    String ARABIC_HEADING1_KEY = "arabicHeading1";
+    String ARABIC_NORMAL_KEY = "arabicNormal";
+    String ARABIC_NORMAL_WITH_HIGHLIGHT_KEY = "arabicNormalWithHighlight";
+    String ARABIC_TABLE_CAPTION_KEY = "arabicTableCaption";
 }

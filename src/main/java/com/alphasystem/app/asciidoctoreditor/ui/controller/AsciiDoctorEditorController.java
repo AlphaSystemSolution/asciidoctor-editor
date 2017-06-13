@@ -226,6 +226,16 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
 
     @FXML private MenuItem registeredButton;
 
+    @FXML private MenuButton arabicStylesButton;
+
+    @FXML private MenuItem arabicHeading1Button;
+
+    @FXML private MenuItem arabicNormalButton;
+
+    @FXML private MenuItem arabicNormalWithHighlightButton;
+
+    @FXML private MenuItem arabicTableCaptionButton;
+
     @FXML private Button keyboardButton;
 
     public AsciiDoctorEditorController() {
@@ -318,6 +328,11 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         copyrightButton.setUserData(COPYRIGHT_KEY);
         registeredButton.setUserData(REGISTERED_KEY);
 
+        arabicHeading1Button.setUserData(ARABIC_HEADING1_KEY);
+        arabicNormalButton.setUserData(ARABIC_NORMAL_KEY);
+        arabicNormalWithHighlightButton.setUserData(ARABIC_NORMAL_WITH_HIGHLIGHT_KEY);
+        arabicTableCaptionButton.setUserData(ARABIC_TABLE_CAPTION_KEY);
+
         sideBarMenuItem.setUserData(SIDE_BAR_KEY);
         sideBarButton.setUserData(SIDE_BAR_KEY);
         exampleMenuItem.setUserData(EXAMPLE_KEY);
@@ -365,6 +380,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         blocksMenu.disableProperty().bind(notActive);
         blocksButton.disableProperty().bind(notActive);
         htmlEntitiesButton.disableProperty().bind(notActive);
+        arabicStylesButton.disableProperty().bind(notActive);
         keyboardButton.disableProperty().bind(notActive);
     }
 
@@ -611,6 +627,12 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     public void htmlSymbolsAction(ActionEvent event) {
         final MenuItem source = (MenuItem) event.getSource();
         applicationController.doHtmlSymbols(currentEditor, (String) source.getUserData());
+    }
+
+    @FXML
+    private void arabicStylesAction(ActionEvent event) {
+        final MenuItem source = (MenuItem) event.getSource();
+        applicationController.doArabicStyles(currentEditor, (String) source.getUserData());
     }
 
     @FXML

@@ -85,19 +85,19 @@
                 </Menu>
                 <Menu text="%format.menu.text">
                     <CheckMenuItem fx:id="boldMenuItem" text="%bold.text" accelerator="SHORTCUT+B"
-                              onAction="#boldAction">
+                                   onAction="#boldAction">
                         <graphic>
                             <FontAwesomeIconView glyphName="%bold.icon"/>
                         </graphic>
                     </CheckMenuItem>
                     <CheckMenuItem fx:id="italicMenuItem" text="%italic.text" accelerator="SHORTCUT+I"
-                              onAction="#italicAction">
+                                   onAction="#italicAction">
                         <graphic>
                             <FontAwesomeIconView glyphName="%italic.icon"/>
                         </graphic>
                     </CheckMenuItem>
                     <CheckMenuItem fx:id="underlineMenuItem" text="%underline.text" accelerator="SHORTCUT+U"
-                              onAction="#underlineAction">
+                                   onAction="#underlineAction">
                         <graphic>
                             <FontAwesomeIconView glyphName="%underline.icon"/>
                         </graphic>
@@ -374,6 +374,17 @@
                         <MenuItem fx:id="dashButton" text="%dash.text" onAction="#htmlSymbolsAction"/>
                         <MenuItem fx:id="copyrightButton" text="%copyright.text" onAction="#htmlSymbolsAction"/>
                         <MenuItem fx:id="registeredButton" text="%registered.text" onAction="#htmlSymbolsAction"/>
+                    </items>
+                </MenuButton>
+                <MenuButton fx:id="arabicStylesButton" text="%arabicStyles.text">
+                    <items>
+                        <MenuItem fx:id="arabicHeading1Button" text="%arabicHeading1.text"
+                                  onAction="#arabicStylesAction"/>
+                        <MenuItem fx:id="arabicNormalButton" text="%arabicNormal.text" onAction="#arabicStylesAction"/>
+                        <MenuItem fx:id="arabicNormalWithHighlightButton" text="%arabicNormalWithHighlight.text"
+                                  onAction="#arabicStylesAction"/>
+                        <MenuItem fx:id="arabicTableCaptionButton" text="%arabicTableCaption.text"
+                                  onAction="#arabicStylesAction"/>
                     </items>
                 </MenuButton>
                 <Button fx:id="keyboardButton" onAction="#showKeyboard">
