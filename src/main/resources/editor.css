@@ -29,12 +29,23 @@
     -fx-text-fill: blue;
 }
 
-.arabicNormal {
+.arabicHeading1, .arabicNormal, .arabicNormalWithHighlight, .arabicTableCaption {
     -fx-font-family: "KFGQPC Uthman Taha Naskh";
 }
 
-.arabicNormal {
+.arabicHeading1{
+}
+
+.arabicNormal, .arabicNormalWithHighlight {
     -fx-font-size: 16pt;
+}
+
+.arabicNormalWithHighlight {
+    -fx-text-fill: gray;
+}
+
+.arabicTableCaption {
+    -fx-text-fill: #099BDD;
 }
 
 .markup {

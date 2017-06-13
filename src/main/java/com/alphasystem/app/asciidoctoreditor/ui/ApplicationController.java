@@ -216,7 +216,22 @@ public final class ApplicationController implements ApplicationConstants {
     }
 
     public void doArabicStyles(final AsciiDoctorTextArea editor, final String style) {
-        System.out.println(style);
+        Markup markup = null;
+        switch (style) {
+            case ARABIC_HEADING1_KEY:
+                markup = asciiDocMarkup.getArabicHeading1();
+                break;
+            case ARABIC_NORMAL_KEY:
+                markup = asciiDocMarkup.getArabicNormal();
+                break;
+            case ARABIC_NORMAL_WITH_HIGHLIGHT_KEY:
+                markup = asciiDocMarkup.getArabicNormalWithHighlight();
+                break;
+            case ARABIC_TABLE_CAPTION_KEY:
+                markup = asciiDocMarkup.getArabicTableCaption();
+                break;
+        }
+        applyMarkup(editor, style, markup, 1);
     }
 
     public void doBlock(final AsciiDoctorTextArea editor, final String blockTypeKey) {

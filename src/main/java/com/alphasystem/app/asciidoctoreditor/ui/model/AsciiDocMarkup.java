@@ -21,6 +21,10 @@ public final class AsciiDocMarkup {
     private Subscript subscript;
     private Superscript superscript;
     private Underline underline;
+    private ArabicHeading1 arabicHeading1;
+    private ArabicNormal arabicNormal;
+    private ArabicNormalWithHighlight arabicNormalWithHighlight;
+    private ArabicTableCaption arabicTableCaption;
 
     public Bold getBold() {
         return bold;
@@ -110,6 +114,38 @@ public final class AsciiDocMarkup {
         this.underline = underline;
     }
 
+    public ArabicHeading1 getArabicHeading1() {
+        return arabicHeading1;
+    }
+
+    public void setArabicHeading1(ArabicHeading1 arabicHeading1) {
+        this.arabicHeading1 = arabicHeading1;
+    }
+
+    public ArabicNormal getArabicNormal() {
+        return arabicNormal;
+    }
+
+    public void setArabicNormal(ArabicNormal arabicNormal) {
+        this.arabicNormal = arabicNormal;
+    }
+
+    public ArabicNormalWithHighlight getArabicNormalWithHighlight() {
+        return arabicNormalWithHighlight;
+    }
+
+    public void setArabicNormalWithHighlight(ArabicNormalWithHighlight arabicNormalWithHighlight) {
+        this.arabicNormalWithHighlight = arabicNormalWithHighlight;
+    }
+
+    public ArabicTableCaption getArabicTableCaption() {
+        return arabicTableCaption;
+    }
+
+    public void setArabicTableCaption(ArabicTableCaption arabicTableCaption) {
+        this.arabicTableCaption = arabicTableCaption;
+    }
+
     public static class Markup {
         private String markupBegin;
         private String markupEnd;
@@ -136,19 +172,19 @@ public final class AsciiDocMarkup {
         }
     }
 
-    public static class Bold extends Markup{
+    public static class Bold extends Markup {
     }
 
-    public static class BoldPartial extends Markup{
+    public static class BoldPartial extends Markup {
     }
 
     public static class Header extends Markup {
     }
 
-    public static class Italic extends Markup{
+    public static class Italic extends Markup {
     }
 
-    public static class ItalicPartial extends Markup{
+    public static class ItalicPartial extends Markup {
     }
 
     public static class Link extends Markup {
@@ -167,6 +203,18 @@ public final class AsciiDocMarkup {
     }
 
     public static class Underline extends Markup {
+    }
+
+    public static class ArabicHeading1 extends Markup {
+    }
+
+    public static class ArabicNormal extends Markup {
+    }
+
+    public static class ArabicNormalWithHighlight extends Markup {
+    }
+
+    public static class ArabicTableCaption extends Markup {
     }
 
 }
