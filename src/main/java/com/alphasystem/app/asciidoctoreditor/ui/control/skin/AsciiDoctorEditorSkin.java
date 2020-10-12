@@ -13,7 +13,6 @@ import javafx.scene.layout.BorderPane;
 
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
-import org.fxmisc.richtext.StyleSpans;
 
 import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
 import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
@@ -22,6 +21,7 @@ import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
 import com.alphasystem.app.asciidoctoreditor.ui.util.ApplicationHelper;
 import com.alphasystem.fx.ui.Browser;
 import com.alphasystem.spring.support.ApplicationContextProvider;
+import org.fxmisc.richtext.model.StyleSpans;
 
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants.BOLD_KEY;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants.ITALIC_KEY;
