@@ -423,7 +423,7 @@ public final class ApplicationController implements ApplicationConstants {
     }
 
 
-    private class OpenDocService extends Service<String> {
+    private static class OpenDocService extends Service<String> {
 
         private final File docFile;
 
@@ -442,7 +442,7 @@ public final class ApplicationController implements ApplicationConstants {
         }
     }
 
-    private class SaveDocService extends Service<File> {
+    private static class SaveDocService extends Service<File> {
 
         private final File destFile;
         private final String content;
@@ -499,7 +499,7 @@ public final class ApplicationController implements ApplicationConstants {
         protected Task<AsciiDocumentInfo> createTask() {
             return new Task<AsciiDocumentInfo>() {
                 @Override
-                protected AsciiDocumentInfo call() throws Exception {
+                protected AsciiDocumentInfo call() {
                     asciidoctor.convert(content, documentInfo.getOptionsBuilder());
                     return documentInfo;
                 }
@@ -507,7 +507,7 @@ public final class ApplicationController implements ApplicationConstants {
         }
     }
 
-    private class ExportToWordService extends Service<Path> {
+    private static class ExportToWordService extends Service<Path> {
 
         private final AsciiDocumentInfo documentInfo;
         private final String content;

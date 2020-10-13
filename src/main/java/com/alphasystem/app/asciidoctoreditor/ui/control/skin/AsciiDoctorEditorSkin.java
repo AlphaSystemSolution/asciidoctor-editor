@@ -94,7 +94,7 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
 
     private class SkinView extends BorderPane {
 
-        private ApplicationController applicationController = ApplicationContextProvider.getBean(ApplicationController.class);
+        private final ApplicationController applicationController = ApplicationContextProvider.getBean(ApplicationController.class);
 
         @FXML
         private Tab sourceTab;
@@ -136,9 +136,7 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
             editor.setWrapText(true);
             // TODO:
             // editor.textProperty().addListener((observable, oldValue, newValue) -> view.setContent(newValue));
-            view.contentProperty().addListener((observable, oldValue, newValue) -> {
-                editor.replaceSelection(newValue);
-            });
+            view.contentProperty().addListener((observable, oldValue, newValue) -> editor.replaceSelection(newValue));
 
             sourceTab.selectedProperty().addListener((o, ov, nv) -> {
                 getSkinnable().setPreviewSelected(false);

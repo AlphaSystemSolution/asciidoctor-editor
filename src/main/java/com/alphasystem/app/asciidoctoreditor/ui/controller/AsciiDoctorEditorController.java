@@ -74,7 +74,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     private final ArabicKeyboard keyboardView;
     private final ObjectProperty<File> initialFile = new SimpleObjectProperty<>(null, "initialFile");
     private final ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false, "active");
-    private ObjectProperty<ApplicationMode> applicationMode = new SimpleObjectProperty<>(null, "applicationMode");
+    private final ObjectProperty<ApplicationMode> applicationMode = new SimpleObjectProperty<>(null, "applicationMode");
     private AsciiDoctorEditor view;
     private AsciiDoctorEditorView currentEditorView;
     private AsciiDoctorTextArea currentEditor;
@@ -520,7 +520,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
             try {
                 Desktop.getDesktop().open(path.toFile());
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Desktop is not supported.");
             }
         };
         applicationController.doExportToWord(new AsciiDocumentInfo(currentEditorView.getPropertyInfo()),
