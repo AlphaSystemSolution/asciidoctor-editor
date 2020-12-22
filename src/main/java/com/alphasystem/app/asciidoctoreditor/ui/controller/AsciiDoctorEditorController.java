@@ -597,15 +597,13 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         EventHandler<WorkerStateEvent> onSucceeded = event -> {
             defaultCursor(view);
             final Path path = (Path) event.getSource().getValue();
-            System.out.printf("File created: %s%n", path.toAbsolutePath());
-            /*
             Platform.runLater(() -> {
                 try {
                     Desktop.getDesktop().open(path.toFile());
                 } catch (IOException e) {
                     System.err.println("Desktop is not supported.");
                 }
-            });*/
+            });
         };
         applicationController.doExportToWord(new AsciiDocumentInfo(currentEditorView.getPropertyInfo()),
                 currentEditor.getText(), onFailed, onSucceeded);
