@@ -1,13 +1,17 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control;
 
-import com.alphasystem.app.asciidoctoreditor.ui.control.skin.AsciiDoctorEditorSkin;
-import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
-import javafx.scene.control.TextArea;
 
-import java.io.File;
+import com.alphasystem.app.asciidoctoreditor.ui.control.skin.AsciiDoctorEditorSkin;
+import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
+import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -18,19 +22,14 @@ public class AsciiDoctorEditorView extends Control {
 
     private final ObjectProperty<AsciiDocumentInfo> propertyInfo = new SimpleObjectProperty<>(null, "propertyInfo");
     private final StringProperty content = new SimpleStringProperty(null, "content");
-    private final ReadOnlyObjectWrapper<File> previewFile = new ReadOnlyObjectWrapper<>(null, "previewFile");
     private final BooleanProperty previewSelected = new SimpleBooleanProperty(false, "previewSelected");
+    private final EditorState editorState = new EditorState();
 
     public AsciiDoctorEditorView() {
         super();
 
         contentProperty().addListener((o, ov, nv) -> {
             setDisable(isBlank(nv));
-        });
-        propertyInfoProperty().addListener((o, ov, nv) -> {
-            File previewFile = nv.getPreviewFile();
-            setDisable(previewFile == null || !previewFile.exists());
-            this.previewFile.setValue(previewFile);
         });
         setContent("");
         setDisable(true);
@@ -61,14 +60,6 @@ public class AsciiDoctorEditorView extends Control {
         return content;
     }
 
-    public File getPreviewFile() {
-        return previewFile.get();
-    }
-
-    public ReadOnlyObjectProperty<File> previewFileProperty() {
-        return previewFile.getReadOnlyProperty();
-    }
-
     public final BooleanProperty previewSelectedProperty() {
         return previewSelected;
     }
@@ -77,7 +68,11 @@ public class AsciiDoctorEditorView extends Control {
         this.previewSelected.set(previewSelected);
     }
 
-    public final TextArea getEditor() {
+    public final EditorState getEditorState() {
+        return editorState;
+    }
+
+    public final AsciiDoctorTextArea getEditor() {
         return ((AsciiDoctorEditorSkin) getSkin()).getEditor();
     }
 

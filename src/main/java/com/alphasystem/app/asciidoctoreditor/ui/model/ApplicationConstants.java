@@ -4,10 +4,8 @@ package com.alphasystem.app.asciidoctoreditor.ui.model;
  * @author sali
  */
 public interface ApplicationConstants {
-    String BOLD_BOUNDARY_KEY = "bold.boundary";
-    String BOLD_NON_BOUNDARY_KEY = "bold.non_boundary";
-    String ITALIC_BOUNDARY_KEY = "italic.boundary";
-    String ITALIC_NON_BOUNDARY_KEY = "italic.non_boundary";
+    String BOLD_KEY = "bold";
+    String ITALIC_KEY = "italic";
     String UNDERLINE_KEY = "underline";
     String STRIKETHROUGH_KEY = "strikethrough";
     String SUBSCRIPT_KEY = "subscript";
@@ -29,4 +27,8 @@ public interface ApplicationConstants {
     String EXAMPLE_KEY = "blocks.example";
     String PASS_THROUGH_KEY = "blocks.passThrough";
     String QUOTE_KEY = "blocks.quote";
+    String ARABIC_HEADING1_KEY = "arabicHeading1";
+    String ARABIC_NORMAL_KEY = "arabicNormal";
+    String ARABIC_NORMAL_WITH_HIGHLIGHT_KEY = "arabicNormalWithHighlight";
+    String ARABIC_TABLE_CAPTION_KEY = "arabicTableCaption";
 }

@@ -1,15 +1,14 @@
 package com.alphasystem.app.asciidoctoreditor.ui.controller;
 
-import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
-import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditor;
-import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
-import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentDialog;
-import com.alphasystem.app.asciidoctoreditor.ui.model.Action;
-import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
-import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode;
-import com.alphasystem.arabic.ui.keyboard.ArabicKeyboard;
-import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
-import com.alphasystem.asciidoc.model.Backend;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
+import java.util.Optional;
+
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -20,29 +19,43 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.*;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Path;
-import java.util.Optional;
+import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditor;
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
+import com.alphasystem.app.asciidoctoreditor.ui.control.NewDocumentDialog;
+import com.alphasystem.app.asciidoctoreditor.ui.model.Action;
+import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants;
+import com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode;
+import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
+import com.alphasystem.arabic.ui.keyboard.ArabicKeyboard;
+import com.alphasystem.asciidoc.model.AsciiDocumentInfo;
+import com.alphasystem.asciidoc.model.Backend;
+import com.alphasystem.spring.support.ApplicationContextProvider;
 
-import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.*;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.NEW;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.OPEN;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.Action.SAVE;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.EMBEDDED;
 import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationMode.STANDALONE;
-import static com.alphasystem.asciidoc.model.Backend.*;
+import static com.alphasystem.asciidoc.model.Backend.DOC_BOOK;
+import static com.alphasystem.asciidoc.model.Backend.HTML;
+import static com.alphasystem.asciidoc.model.Backend.WORD;
 import static com.alphasystem.fx.ui.util.UiUtilities.defaultCursor;
 import static com.alphasystem.fx.ui.util.UiUtilities.waitCursor;
 import static com.alphasystem.util.AppUtil.USER_HOME_DIR;
@@ -56,16 +69,16 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class AsciiDoctorEditorController implements ApplicationConstants {
 
     private final FileChooser fileChooser = new FileChooser();
-    private final ApplicationController applicationController = ApplicationController.getInstance();
+    private final ApplicationController applicationController = ApplicationContextProvider.getBean(ApplicationController.class);
     private final NewDocumentDialog newDocumentDialog = new NewDocumentDialog();
     private final Popup keyboardPopup = new Popup();
     private final ArabicKeyboard keyboardView;
     private final ObjectProperty<File> initialFile = new SimpleObjectProperty<>(null, "initialFile");
     private final ReadOnlyBooleanWrapper active = new ReadOnlyBooleanWrapper(false, "active");
-    private ObjectProperty<ApplicationMode> applicationMode = new SimpleObjectProperty<>(null, "applicationMode");
+    private final ObjectProperty<ApplicationMode> applicationMode = new SimpleObjectProperty<>(null, "applicationMode");
     private AsciiDoctorEditor view;
     private AsciiDoctorEditorView currentEditorView;
-    private TextArea currentEditor;
+    private AsciiDoctorTextArea currentEditor;
     private int startCaretPosition = -1;
 
     @FXML
@@ -153,22 +166,22 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     private Button pasteButton;
 
     @FXML
-    private MenuItem boldMenuItem;
+    private CheckMenuItem boldMenuItem;
 
     @FXML
-    private Button boldButton;
+    private ToggleButton boldButton;
 
     @FXML
-    private MenuItem italicMenuItem;
+    private CheckMenuItem italicMenuItem;
 
     @FXML
-    private Button italicButton;
+    private ToggleButton italicButton;
 
     @FXML
-    private MenuItem underlineMenuItem;
+    private CheckMenuItem underlineMenuItem;
 
     @FXML
-    private Button underlineButton;
+    private ToggleButton underlineButton;
 
     @FXML
     private MenuItem strikethroughMenuItem;
@@ -288,6 +301,21 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     private MenuItem registeredButton;
 
     @FXML
+    private MenuButton arabicStylesButton;
+
+    @FXML
+    private MenuItem arabicHeading1Button;
+
+    @FXML
+    private MenuItem arabicNormalButton;
+
+    @FXML
+    private MenuItem arabicNormalWithHighlightButton;
+
+    @FXML
+    private MenuItem arabicTableCaptionButton;
+
+    @FXML
     private Button keyboardButton;
 
     public AsciiDoctorEditorController() {
@@ -311,7 +339,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
 
         initialFile.addListener((o, ov, nv) -> updateFile(nv));
         applicationMode.addListener((o, ov, nv) -> updateApplicationMode(nv));
-        keyboardView.htmlCodeValueProperty().addListener((o, ov, nv) -> {
+        keyboardView.unicodeValueProperty().addListener((o, ov, nv) -> {
             if (nv == null) {
                 return;
             }
@@ -327,6 +355,7 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
                 currentEditor.insertText(startCaretPosition, nv);
             }
         });
+
     }
 
     public final ObjectProperty<File> initialFileProperty() {
@@ -345,10 +374,12 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     void initialize() {
         tabPane.getSelectionModel().selectedItemProperty().addListener((o, ov, nv) -> {
             if (nv == null) {
+                applicationController.setCurrentEditorState(null);
                 active.set(false);
             } else {
                 currentEditorView = (AsciiDoctorEditorView) nv.getContent();
                 currentEditor = currentEditorView.getEditor();
+                applicationController.setCurrentEditorState(currentEditorView.getEditorState());
                 active.set(currentEditor != null);
                 currentEditorView.previewSelectedProperty().addListener((o1, ov1, nv2) -> active.set(!nv2));
             }
@@ -376,6 +407,11 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         dashButton.setUserData(DASH_KEY);
         copyrightButton.setUserData(COPYRIGHT_KEY);
         registeredButton.setUserData(REGISTERED_KEY);
+
+        arabicHeading1Button.setUserData(ARABIC_HEADING1_KEY);
+        arabicNormalButton.setUserData(ARABIC_NORMAL_KEY);
+        arabicNormalWithHighlightButton.setUserData(ARABIC_NORMAL_WITH_HIGHLIGHT_KEY);
+        arabicTableCaptionButton.setUserData(ARABIC_TABLE_CAPTION_KEY);
 
         sideBarMenuItem.setUserData(SIDE_BAR_KEY);
         sideBarButton.setUserData(SIDE_BAR_KEY);
@@ -424,11 +460,15 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         blocksMenu.disableProperty().bind(notActive);
         blocksButton.disableProperty().bind(notActive);
         htmlEntitiesButton.disableProperty().bind(notActive);
+        arabicStylesButton.disableProperty().bind(notActive);
         keyboardButton.disableProperty().bind(notActive);
     }
 
     // actions
 
+    /**
+     * Binds to open tool bar button and menu item.
+     */
     @FXML
     public void newDocumentAction() {
         final Optional<AsciiDocumentInfo> result = newDocumentDialog.showAndWait();
@@ -457,10 +497,86 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         fireUpdateAction(OPEN);
     }
 
+    /**
+     * Delegates call to {@link ApplicationController#doOpenAction(File, EventHandler, EventHandler)} to open
+     * document. Upon successful return an editor will be opened with the content of current file.
+     *
+     * @param file file to open
+     * @see ApplicationController#doOpenAction(File, EventHandler, EventHandler)
+     * @see #openDocument(File, String)
+     */
+    private void openAction(final File file) {
+        EventHandler<WorkerStateEvent> onFailed = event -> defaultCursor(view);
+        EventHandler<WorkerStateEvent> onSucceeded = event -> {
+            try {
+                openDocument(file, (String) event.getSource().getValue());
+            } catch (IOException e) {
+                throw new UncheckedIOException(e.getMessage(), e);
+            } finally {
+                defaultCursor(view);
+            }
+        };
+        applicationController.doOpenAction(file, onFailed, onSucceeded);
+    }
+
+    /**
+     * Opens a document editor. This method will be called from the <code>onSucceeded</code> call back of method
+     * {@link #openAction(File)}.
+     *
+     * @param file    file to open, if null then creates a dummy file to open a new document
+     * @param content content of the document
+     * @throws FileNotFoundException if File to open is not found
+     * @see #openAction(File)
+     */
+    private void openDocument(File file, String content) throws IOException {
+        if (file == null || !file.exists()) {
+            String path = file == null ? "Not provided" : file.getPath();
+            throw new FileNotFoundException(format("File {%s} does not exists.", path));
+        }
+        addTab(applicationController.openDocument(file, content));
+    }
+
+    /**
+     * Binds to save tool bar button and menu item.
+     */
     @FXML
     public void saveAction() {
         saveAction(false);
         fireUpdateAction(SAVE);
+    }
+
+    /**
+     * Saves current file. If flag <code>saveAs</code> is true or current base dir is null then file dialog will be
+     * displayed to choose file.
+     *
+     * @param saveAs if <i>true</i> then file will be saved as different file (dialog will be displayed to choose new file,
+     *               otherwise save current file.
+     * @see ApplicationController#doSaveAction(File, String, EventHandler, EventHandler)
+     */
+    private void saveAction(boolean saveAs) {
+        if (currentEditorView != null) {
+            File destFile = currentEditorView.getPropertyInfo().getSrcFile();
+            File baseDir = destFile.getParentFile();
+            boolean showFileDialog = saveAs || baseDir == null;
+            if (showFileDialog) {
+                destFile = fileChooser.showSaveDialog(view.getScene().getWindow());
+                if (destFile == null) {
+                    // user might have cancel the dialog
+                    return;
+                }
+            } // end of if "showFileDialog"
+            EventHandler<WorkerStateEvent> onFailed = this::handleOnFailed;
+            EventHandler<WorkerStateEvent> onSucceeded = event -> saveDocument();
+            applicationController.doSaveAction(destFile, currentEditor.getText(), onFailed, onSucceeded);
+        }
+    }
+
+    /**
+     * Callback method of <code>onSucceeded</code> of {@link ApplicationController#doSaveAction(File, String, EventHandler, EventHandler)}.
+     * This is dummy method does nothing since file must have been saved already.
+     */
+    private void saveDocument() {
+        // do nothing file should have been saved already
     }
 
     @FXML
@@ -481,11 +597,13 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         EventHandler<WorkerStateEvent> onSucceeded = event -> {
             defaultCursor(view);
             final Path path = (Path) event.getSource().getValue();
-            try {
-                Desktop.getDesktop().open(path.toFile());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Platform.runLater(() -> {
+                try {
+                    Desktop.getDesktop().open(path.toFile());
+                } catch (IOException e) {
+                    System.err.println("Desktop is not supported.");
+                }
+            });
         };
         applicationController.doExportToWord(new AsciiDocumentInfo(currentEditorView.getPropertyInfo()),
                 currentEditor.getText(), onFailed, onSucceeded);
@@ -594,6 +712,12 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
     }
 
     @FXML
+    private void arabicStylesAction(ActionEvent event) {
+        final MenuItem source = (MenuItem) event.getSource();
+        applicationController.doArabicStyles(currentEditor, (String) source.getUserData());
+    }
+
+    @FXML
     public void showKeyboard(ActionEvent event) {
         if (keyboardPopup.isShowing()) {
             keyboardPopup.hide();
@@ -608,66 +732,8 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
 
     // action helpers
 
-    /**
-     * Delegates call to {@link ApplicationController#doOpenAction(File, EventHandler, EventHandler)} to open
-     * document. Upon successful return an editor will be opened with the content of current file.
-     *
-     * @param file file to open
-     * @see ApplicationController#doOpenAction(File, EventHandler, EventHandler)
-     * @see #openDocument(File, String)
-     */
-    private void openAction(final File file) {
-        EventHandler<WorkerStateEvent> onFailed = event -> defaultCursor(view);
-        EventHandler<WorkerStateEvent> onSucceeded = event -> {
-            try {
-                openDocument(file, (String) event.getSource().getValue());
-            } catch (IOException e) {
-                throw new UncheckedIOException(e.getMessage(), e);
-            } finally {
-                defaultCursor(view);
-            }
-        };
-        applicationController.doOpenAction(file, onFailed, onSucceeded);
-    }
-
-    /**
-     * Opens a document editor.
-     *
-     * @param file    file to open, if null then creates a dummy file to open a new document
-     * @param content content of the document
-     * @throws FileNotFoundException
-     */
-    private void openDocument(File file, String content) throws IOException {
-        if (file == null || !file.exists()) {
-            String path = file == null ? "Not provided" : file.getPath();
-            throw new FileNotFoundException(format("File {%s} does not exists.", path));
-        }
-        addTab(applicationController.openDocument(file, content));
-    }
-
-    private void saveAction(boolean saveAs) {
-        if (currentEditorView != null) {
-            File destFile = currentEditorView.getPropertyInfo().getSrcFile();
-            File baseDir = destFile.getParentFile();
-            boolean showFileDialog = saveAs || baseDir == null;
-            if (showFileDialog) {
-                destFile = fileChooser.showSaveDialog(view.getScene().getWindow());
-                if (destFile == null) {
-                    // user might have cancel the dialog
-                    return;
-                }
-            } // end of if "showFileDialog"
-            EventHandler<WorkerStateEvent> onFailed = this::handleOnFailed;
-            EventHandler<WorkerStateEvent> onSucceeded = event -> saveDocument();
-            applicationController.doSaveAction(destFile, currentEditor.getText(), onFailed, onSucceeded);
-        }
-    }
-
-    private void saveDocument() {
-        // do nothing file should have been saved already
-    }
-
     private void addTab(AsciiDoctorEditorView editorView) {
+        updateToolBar(editorView);
         Tab tab = new Tab(editorView.getPropertyInfo().getSrcFile().getName(), editorView);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);
@@ -678,6 +744,22 @@ public class AsciiDoctorEditorController implements ApplicationConstants {
         editorView.getEditor().end();
         editorView.getEditor().requestFocus();
         defaultCursor(view);
+    }
+
+    private void updateToolBar(AsciiDoctorEditorView editorView) {
+        final EditorState editorState = editorView.getEditorState();
+        editorState.boldProperty().addListener((observable, oldValue, newValue) -> {
+            boldButton.setSelected(newValue);
+            boldMenuItem.setSelected(newValue);
+        });
+        editorState.italicProperty().addListener((observable, oldValue, newValue) -> {
+            italicButton.setSelected(newValue);
+            italicMenuItem.setSelected(newValue);
+        });
+        editorState.underlineProperty().addListener((observable, oldValue, newValue) -> {
+            underlineButton.setSelected(newValue);
+            underlineMenuItem.setSelected(newValue);
+        });
     }
 
     private void updateFile(File file) {

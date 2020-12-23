@@ -1,19 +1,34 @@
 package com.alphasystem.app.asciidoctoreditor.ui.control.skin;
 
-import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
-import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
-import com.alphasystem.fx.ui.Browser;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.SkinBase;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
-import org.asciidoctor.OptionsBuilder;
-
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.IndexRange;
+import javafx.scene.control.SkinBase;
+import javafx.scene.control.Tab;
+import javafx.scene.layout.BorderPane;
+
+import org.asciidoctor.AttributesBuilder;
+import org.asciidoctor.OptionsBuilder;
+
+import com.alphasystem.app.asciidoctoreditor.ui.ApplicationController;
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorEditorView;
+import com.alphasystem.app.asciidoctoreditor.ui.control.AsciiDoctorTextArea;
+import com.alphasystem.app.asciidoctoreditor.ui.model.EditorState;
+import com.alphasystem.app.asciidoctoreditor.ui.util.ApplicationHelper;
+import com.alphasystem.fx.ui.Browser;
+import com.alphasystem.spring.support.ApplicationContextProvider;
+import org.fxmisc.richtext.model.StyleSpans;
+
+import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants.BOLD_KEY;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants.ITALIC_KEY;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants.STRIKETHROUGH_KEY;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants.SUBSCRIPT_KEY;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants.SUPERSCRIPT_KEY;
+import static com.alphasystem.app.asciidoctoreditor.ui.model.ApplicationConstants.UNDERLINE_KEY;
 import static java.util.ResourceBundle.getBundle;
 
 /**
@@ -29,13 +44,57 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
         getChildren().setAll(skinView);
     }
 
-    public final TextArea getEditor() {
+    private static boolean isStyle(Collection<String> s, String style) {
+        return s.contains(style);
+    }
+
+    private static boolean isStyle(final StyleSpans<Collection<String>> styles, final String style) {
+        return styles.styleStream().anyMatch(s -> isStyle(s, style));
+    }
+
+    public final AsciiDoctorTextArea getEditor() {
         return skinView.editor;
+    }
+
+    private void beingUpdated(AsciiDoctorTextArea editor, AsciiDoctorEditorView view) {
+        EditorState state = view.getEditorState();
+
+        boolean bold, italic, underline, strikeThrough, subScript, superScript;
+
+        final IndexRange selection = editor.getSelection();
+        if (selection != null && selection.getLength() != 0) {
+            final StyleSpans<Collection<String>> styles = editor.getStyleSpans(selection);
+            bold = isStyle(styles, BOLD_KEY);
+            italic = isStyle(styles, ITALIC_KEY);
+            underline = isStyle(styles, UNDERLINE_KEY);
+            strikeThrough = isStyle(styles, STRIKETHROUGH_KEY);
+            subScript = isStyle(styles, SUBSCRIPT_KEY);
+            superScript = isStyle(styles, SUPERSCRIPT_KEY);
+        } else {
+            int p = editor.getCurrentParagraph();
+            int col = editor.getCaretColumn();
+            final Collection<String> styles = editor.getStyleAtPosition(p, col);
+            bold = isStyle(styles, BOLD_KEY);
+            italic = isStyle(styles, ITALIC_KEY);
+            underline = isStyle(styles, UNDERLINE_KEY);
+            strikeThrough = isStyle(styles, STRIKETHROUGH_KEY);
+            subScript = isStyle(styles, SUBSCRIPT_KEY);
+            superScript = isStyle(styles, SUPERSCRIPT_KEY);
+        }
+
+        state.setBold(bold);
+        state.setItalic(italic);
+        state.setUnderline(underline);
+        state.setStrikeThrough(strikeThrough);
+        state.setSubScript(subScript);
+        state.setSuperScript(superScript);
+        state.setCurrentWordAndMarkup(ApplicationHelper.getCurrentWordAndMarkup(editor));
+        state.setCurrentWord(ApplicationHelper.getCurrentWord(editor, state));
     }
 
     private class SkinView extends BorderPane {
 
-        private ApplicationController applicationController = ApplicationController.getInstance();
+        private final ApplicationController applicationController = ApplicationContextProvider.getBean(ApplicationController.class);
 
         @FXML
         private Tab sourceTab;
@@ -44,7 +103,7 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
         private Tab previewTab;
 
         @FXML
-        private TextArea editor;
+        private AsciiDoctorTextArea editor;
 
         @FXML
         private Browser preview;
@@ -68,11 +127,16 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
         @FXML
         void initialize() {
             AsciiDoctorEditorView view = getSkinnable();
-            view.previewFileProperty().addListener((o, ov, nv) -> preview.loadUrl(nv));
 
+            editor.beingUpdatedProperty().addListener((observable, oldValue, newValue) -> {
+                if (!newValue) {
+                    beingUpdated(editor, view);
+                }
+            });
             editor.setWrapText(true);
-            editor.textProperty().bindBidirectional(view.contentProperty());
-            preview.loadUrl(view.getPreviewFile());
+            // TODO:
+            // editor.textProperty().addListener((observable, oldValue, newValue) -> view.setContent(newValue));
+            view.contentProperty().addListener((observable, oldValue, newValue) -> editor.replaceSelection(newValue));
 
             sourceTab.selectedProperty().addListener((o, ov, nv) -> {
                 getSkinnable().setPreviewSelected(false);
@@ -85,8 +149,10 @@ public class AsciiDoctorEditorSkin extends SkinBase<AsciiDoctorEditorView> {
 
         private void refreshPreview() {
             getSkinnable().setPreviewSelected(true);
-            OptionsBuilder optionsBuilder = getSkinnable().getPropertyInfo().getOptionsBuilder();
-            applicationController.refreshPreview(optionsBuilder, editor.getText(), preview);
+            final AttributesBuilder attributesBuilder = AttributesBuilder.attributes().linkCss(false);
+            OptionsBuilder optionsBuilder = getSkinnable().getPropertyInfo().getOptionsBuilder().headerFooter(true)
+                    .toFile(false).attributes(attributesBuilder);
+            preview.loadContent(applicationController.refreshPreview(optionsBuilder, editor.getText()));
         }
 
     }
